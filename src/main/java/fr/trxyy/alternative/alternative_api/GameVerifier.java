@@ -16,7 +16,7 @@ import fr.trxyy.alternative.alternative_api.utils.FileUtil;
 import fr.trxyy.alternative.alternative_api.utils.Logger;
 
 public class GameVerifier {
-	
+	/** Not finished. */
 	public GameEngine engine;
 	public static List<String> allowedFiles = new ArrayList<String>();
 	public List<File> filesList;
