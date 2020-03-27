@@ -11,14 +11,13 @@ import fr.trxyy.alternative.alternative_api.GameEngine;
 import fr.trxyy.alternative.alternative_api.GameVerifier;
 import fr.trxyy.alternative.alternative_api.utils.FileUtil;
 import fr.trxyy.alternative.alternative_api.utils.Logger;
-import javafx.application.Platform;
 
 public class Downloader extends Thread {
 	private final String url;
 	private final String sha1;
 	private final File file;
 	private GameEngine engine;
-	
+
 	public static double percentage = 0.0D;
 
 	public void run() {
@@ -34,7 +33,8 @@ public class Downloader extends Thread {
 		this.url = url;
 		this.sha1 = sha1;
 		this.engine = engine_;
-		GameVerifier.addToFileList(file.getAbsolutePath().replace(engine.getGameFolder().getGameDir().getAbsolutePath(), "").replace("\\", "/"));
+		GameVerifier.addToFileList(file.getAbsolutePath()
+				.replace(engine.getGameFolder().getGameDir().getAbsolutePath(), "").replace("\\", "/"));
 		file.getParentFile().mkdirs();
 	}
 
@@ -48,10 +48,10 @@ public class Downloader extends Thread {
 			bufferedInputStream = new BufferedInputStream(url_.openStream());
 			URLConnection urlConnection = url_.openConnection();
 			fileOutputStream = new FileOutputStream(this.file);
-			
+
 			byte[] data = new byte[1024];
 			int read;
-			
+
 			while ((read = bufferedInputStream.read(data, 0, 1024)) != -1) {
 				fileOutputStream.write(data, 0, read);
 			}

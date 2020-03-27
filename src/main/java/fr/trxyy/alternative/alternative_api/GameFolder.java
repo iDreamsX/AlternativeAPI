@@ -16,45 +16,54 @@ public class GameFolder {
 	public File nativesCacheDir;
 
 	public GameFolder(String location) {
-		gameDir = GameUtils.getWorkingDirectory(location);
-		binDir = new File(gameDir, "bin");
-		playDir = new File(gameDir, "bin" + File.separator + "game");
-		gameJar = new File(gameDir, "bin" + File.separator + "minecraft.jar");
-		libsDir = new File(gameDir, "libraries");
-		assetsDir = new File(gameDir, "assets");
-		nativesDir = new File(gameDir, "bin" + File.separator + "natives");
-		nativesCacheDir = new File(gameDir, "bin" + File.separator + "cache_natives");
+		this.gameDir = GameUtils.getWorkingDirectory(location);
+		this.binDir = new File(this.gameDir, "bin");
+		this.playDir = new File(this.gameDir, "bin" + File.separator + "game");
+		this.gameJar = new File(this.gameDir, "bin" + File.separator + "minecraft.jar");
+		this.libsDir = new File(this.gameDir, "libraries");
+		this.assetsDir = new File(this.gameDir, "assets");
+		this.nativesDir = new File(this.gameDir, "bin" + File.separator + "natives");
+		this.nativesCacheDir = new File(this.gameDir, "bin" + File.separator + "cache_natives");
+		
+		/** ----- Creating missing folders -------- */
+		this.getLibsDir().mkdirs();
+		this.getAssetsDir().mkdirs();
+		this.getBinDir().mkdirs();
+		this.getGameDir().mkdirs();
+		this.getNativesDir().mkdirs();
+		this.getNativesCacheDir().mkdirs();
+		this.getPlayDir().mkdirs();
 	}
 
 	public File getGameDir() {
-		return gameDir;
+		return this.gameDir;
 	}
 
 	public File getBinDir() {
-		return binDir;
+		return this.binDir;
 	}
 
 	public File getPlayDir() {
-		return playDir;
+		return this.playDir;
 	}
 
 	public File getGameJar() {
-		return gameJar;
+		return this.gameJar;
 	}
 
 	public File getLibsDir() {
-		return libsDir;
+		return this.libsDir;
 	}
 
 	public File getAssetsDir() {
-		return assetsDir;
+		return this.assetsDir;
 	}
 
 	public File getNativesDir() {
-		return nativesDir;
+		return this.nativesDir;
 	}
 
 	public File getNativesCacheDir() {
-		return nativesCacheDir;
+		return this.nativesCacheDir;
 	}
 }

@@ -29,7 +29,6 @@ public class FileUtil {
 	public static String skipFoldersInExtraction = "META-INF/";
 
 	public static void deleteFakeNatives(File targetDir, GameEngine engine) throws IOException {
-		OperatingSystem os = OperatingSystem.getCurrentPlatform();
 		File[] listOfFiles = engine.getGameFolder().getNativesDir().listFiles();
 		for (int index = 0; index < listOfFiles.length; index++) {
 			if (listOfFiles[index].isFile()) {
@@ -41,14 +40,12 @@ public class FileUtil {
 					}
 				}
 			} else {
-//				Logger.err("Deleting >> " + listOfFiles[index].getName());
 				deleteFolder(listOfFiles[index]);
 			}
 		}
 	}
 
 	public static void unpackNatives(File targetDir, GameEngine engine) throws IOException {
-		OperatingSystem os = OperatingSystem.getCurrentPlatform();
 		File[] listOfFiles = engine.getGameFolder().getNativesCacheDir().listFiles();
 		for (int index = 0; index < listOfFiles.length; index++) {
 			if (listOfFiles[index].isFile()) {
@@ -251,7 +248,7 @@ public class FileUtil {
 			System.err.println(x);
 		}
 	}
-	
+
 	public static String getEtag(String etag) {
 		if (etag == null)
 			etag = "-";

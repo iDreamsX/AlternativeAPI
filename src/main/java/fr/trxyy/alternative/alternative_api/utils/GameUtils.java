@@ -7,30 +7,23 @@ import fr.trxyy.alternative.alternative_api.GameEngine;
 
 public class GameUtils {
 
-	/** ----- Working Directory ----- */
-	public static String mc_dir;
-
 	public static File getWorkingDirectory(String workDir) {
-		mc_dir = workDir;
 		String userHome = System.getProperty("user.home", ".");
 		File workingDirectory;
 		switch (getPlatform()) {
 		case 1:
+			workingDirectory = new File(userHome + "/." + workDir);
 		case 2:
-			workingDirectory = new File(userHome, "." + mc_dir + "/");
+			workingDirectory = new File(userHome + "/." + workDir);
 			break;
 		case 3:
-			String applicationData = System.getenv("APPDATA");
-			if (applicationData != null)
-				workingDirectory = new File(applicationData, "." + mc_dir + "/");
-			else
-				workingDirectory = new File(userHome, "." + mc_dir + "/");
+			workingDirectory = new File(userHome + "\\AppData\\Roaming\\." + workDir);
 			break;
 		case 4:
-			workingDirectory = new File(userHome, "Library/Application Support/" + mc_dir);
+			workingDirectory = new File(userHome + "/Library/Application Support/" + workDir);
 			break;
 		default:
-			workingDirectory = new File(userHome, "." + mc_dir + "/");
+			workingDirectory = new File(userHome + "/." + workDir);
 		}
 		return workingDirectory;
 	}

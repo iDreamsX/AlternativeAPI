@@ -40,6 +40,9 @@ public class GameParser {
 
 					File localFile = new File(engine.getGameFolder().getGameDir(), key);
 					GameVerifier.addToFileList(localFile.getAbsolutePath().replace(engine.getGameFolder().getGameDir().getAbsolutePath(), "").replace('/', File.separatorChar));
+					if (key.contains("minecraft.jar")) {
+						engine.getGameUpdater().hasCustomJar = true;
+					}
 					if (!localFile.isDirectory()) {
 						if (etag.length() > 1) {
 							etag = FileUtil.getEtag(etag);
@@ -48,17 +51,23 @@ public class GameParser {
 									final String localMd5 = FileUtil.getMD5(localFile);
 									if (!localMd5.equals(etag)) {
 										if (!(engine.getGameLinks().getCustomFilesUrl() + key).endsWith("/")) {
-											engine.getGameUpdater().files.put(key, new LauncherFile(size, engine.getGameLinks().getCustomFilesUrl() + key, localFile.getAbsolutePath()));
+											if (!key.contains("downloads.xml")) {
+												engine.getGameUpdater().files.put(key, new LauncherFile(size, engine.getGameLinks().getCustomFilesUrl() + key, localFile.getAbsolutePath()));
+											}
 										}
 									}
 								} else {
 									if (!(engine.getGameLinks().getCustomFilesUrl() + key).endsWith("/")) {
+										if (!key.contains("downloads.xml")) {
 										engine.getGameUpdater().files.put(key, new LauncherFile(size, engine.getGameLinks().getCustomFilesUrl() + key, localFile.getAbsolutePath()));
+										}
 									}
 								}
 							} else {
 								if (!(engine.getGameLinks().getCustomFilesUrl() + key).endsWith("/")) {
+									if (!key.contains("downloads.xml")) {
 									engine.getGameUpdater().files.put(key, new LauncherFile(size, engine.getGameLinks().getCustomFilesUrl() + key, localFile.getAbsolutePath()));
+								}
 								}
 							}
 

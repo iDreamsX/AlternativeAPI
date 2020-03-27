@@ -33,7 +33,7 @@ public class MinecraftVersion {
 	public List<MinecraftLibrary> getLibraries() {
 		return libraries;
 	}
-	
+
 	public MinecraftClient getDownloads() {
 		return downloads;
 	}

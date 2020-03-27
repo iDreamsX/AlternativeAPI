@@ -3,7 +3,7 @@ package fr.trxyy.alternative.alternative_api.auth;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Random;
+import java.util.UUID;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -12,7 +12,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
-import fr.trxyy.alternative.alternative_api.GameEngine;
 import fr.trxyy.alternative.alternative_api.account.AccountType;
 import fr.trxyy.alternative.alternative_api.account.Session;
 import fr.trxyy.alternative.alternative_api.utils.Logger;
@@ -34,14 +33,14 @@ public class GameAuth
 		} else if (realAuth.equals(AccountType.OFFLINE)) {
 			isAuthed = true;
 		    session.setUsername(userName);
-		    session.setToken(userName);
-		    session.setUuid(userName);
+		    session.setToken(TokenGenerator.generateToken(userName));
+		    session.setUuid(UUID.randomUUID().toString().replace("-", ""));
 		}
 	}
   
 	public void tryLogin() {
 		Logger.log("Try login...");
-		connectMinecraft(this.USERNAME, this.PASSWORD);
+		this.connectMinecraft(this.USERNAME, this.PASSWORD);
 	}
   
 	public String[] connectMinecraft(String username, String password) {

@@ -7,14 +7,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.sun.javafx.css.Rule;
-
-import fr.trxyy.alternative.alternative_api.minecraft.CompatibilityRule.Action;
 import fr.trxyy.alternative.alternative_api.utils.OperatingSystem;
 
 public class MinecraftLibrary {
-	private AlternativeSubstitutor SUBSTITUTOR = new AlternativeSubstitutor(new HashMap() {
-	});
+	private AlternativeSubstitutor SUBSTITUTOR = new AlternativeSubstitutor(new HashMap() {});
 	protected String name;
 	public List<CompatibilityRule> rules;
 	protected Map<OperatingSystem, String> natives; // fais un bug. LibraryOS

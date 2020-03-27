@@ -5,7 +5,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.text.DecimalFormat;
 
 import javax.imageio.ImageIO;
 
@@ -14,7 +13,6 @@ import fr.trxyy.alternative.alternative_api.utils.Logger;
 import fr.trxyy.alternative.alternative_api.utils.ResourceLocation;
 import javafx.animation.Timeline;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -24,8 +22,7 @@ import javafx.scene.media.MediaView;
 
 public class IScreen {
 	private static ResourceLocation RESOURCE_LOCATION = new ResourceLocation();
-	public static Timeline timeline;
-	public static Timeline timeline_;
+	public Timeline timeline;
 
 	public IScreen() {
 	}

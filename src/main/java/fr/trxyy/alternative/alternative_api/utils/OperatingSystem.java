@@ -39,16 +39,11 @@ public enum OperatingSystem {
 		return this == UNKNOWN;
 	}
 
-	public static String getJavaPath(boolean appendBinFolder) {
-		char separator = File.separatorChar;
-		String path = System.getProperty("java.home") + separator;
-		if (appendBinFolder) {
-			path = path + "bin" + separator + "java";
-			if (getCurrent() == WINDOWS) {
-				path = path + "w.exe";
-			}
-		}
-		return path;
+	public static String getJavaPath() {
+		if (System.getProperty("os.name").toLowerCase().contains("win"))
+			return "\"" + System.getProperty("java.home") + "\\bin\\java" + "\"";
+
+		return System.getProperty("java.home") + "/bin/java";
 	}
 
 	public String getJavaDir() {
@@ -70,10 +65,6 @@ public enum OperatingSystem {
 			}
 		}
 		return OperatingSystem.UNKNOWN;
-	}
-
-	public static String getJavaPath() {
-		return getJavaPath(true);
 	}
 
 	public static boolean match(String part) {
@@ -109,7 +100,7 @@ public enum OperatingSystem {
 
 	public static void openLink(final URI link) {
 		try {
-			final Class desktopClass = Class.forName("java.awt.Desktop");
+			final Class<?> desktopClass = Class.forName("java.awt.Desktop");
 			final Object o = desktopClass.getMethod("getDesktop", (Class[]) new Class[0]).invoke(null, new Object[0]);
 			desktopClass.getMethod("browse", URI.class).invoke(o, link);
 		} catch (Throwable e2) {
@@ -146,7 +137,7 @@ public enum OperatingSystem {
 			}
 		}
 		try {
-			final Class desktopClass = Class.forName("java.awt.Desktop");
+			final Class<?> desktopClass = Class.forName("java.awt.Desktop");
 			final Object desktop = desktopClass.getMethod("getDesktop", (Class[]) new Class[0]).invoke(null,
 					new Object[0]);
 			desktopClass.getMethod("browse", URI.class).invoke(desktop, path.toURI());
