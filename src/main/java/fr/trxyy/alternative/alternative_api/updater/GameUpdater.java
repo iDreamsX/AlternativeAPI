@@ -94,7 +94,6 @@ public class GameUpdater extends Thread {
 			this.setCurrentInfoText("===== Recuperation d'un fichier index... (fichiers persos)");
 			Logger.log("========================================");
 			GameParser.getFilesToDownload(engine);
-//			Logger.log("files: " + needToDownload);
 		}
 		Logger.log("Updating assets               [Step 3/5]");
 		this.setCurrentInfoText("===== Telechargement des assets");
@@ -301,7 +300,7 @@ public class GameUpdater extends Thread {
 	}
 
 	public void indexAssets() {
-		String json = null; // AssetIndexInfo
+		String json = null;
 		String assetUrl = minecraftVersion.getAssetIndex().getUrl().toString();
 		try {
 			json = JsonUtil.loadJSON(assetUrl);

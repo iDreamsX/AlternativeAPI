@@ -45,8 +45,6 @@ public class GameRunner {
 		processBuilder.redirectErrorStream(true);
 		processBuilder.command(getLaunchCommand());
 		String cmds = "";
-//		String str_[] = engine.getGameVersion().getArguments().split(" ");
-//		List<String> arguments = Arrays.asList(str_);
 		for (String command : getLaunchCommand()) {
 			cmds += command + " ";
 		}
@@ -59,17 +57,13 @@ public class GameRunner {
 			BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			while ((line = input.readLine()) != null) {
 				this.engine.getGameUpdater().setCurrentInfoText(line);
-//				if (line.contains("Stopping!")) {
-//					Platform.exit();
-//					System.exit(0);
-//				}
+				if (line.contains("Stopping!")) {
+					Platform.exit();
+					System.exit(0);
+				}
 				Logger.log(line);
 			}
 			input.close();
-			if (!process.isAlive()) {
-				Platform.exit();
-				System.exit(0);
-			}
 			return process;
 		} catch (IOException e) {
 			throw new Exception("Cannot launch !", e);

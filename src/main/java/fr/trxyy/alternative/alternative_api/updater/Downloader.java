@@ -20,11 +20,6 @@ public class Downloader extends Thread {
 	private final File file;
 	private GameEngine engine;
 
-//	public static int totalSize = 0;
-//	public static int fakeSize = 0;
-//	public static int downloadedSize;
-//	public static double percentage = 0;
-
 	public void run() {
 		try {
 			download();
@@ -48,7 +43,7 @@ public class Downloader extends Thread {
 		BufferedInputStream bufferedInputStream = null;
 		FileOutputStream fileOutputStream = null;
 		try {
-			URL url_ = new URL(this.url); // .replace(" ", "%20")
+			URL url_ = new URL(this.url);
 			bufferedInputStream = new BufferedInputStream(url_.openStream());
 			fileOutputStream = new FileOutputStream(this.file);
 			
@@ -57,13 +52,8 @@ public class Downloader extends Thread {
 			int read;
 
 			while ((read = bufferedInputStream.read(data, 0, 1024)) != -1) {
-//				downloadedSize += read;
 				fileOutputStream.write(data, 0, read);
-//				percentage = engine.getGameUpdater().downloadedFiles * 1.0D / engine.getGameUpdater().needToDownload;
-			}
-//			Platform.runLater(() -> engine.getGameUpdater().getProgressBar().setProgress(percentage));
-//			engine.getGameUpdater().downloadedFiles++;
-			
+			}			
 		} finally {
 			if (bufferedInputStream != null) {
 				bufferedInputStream.close();
