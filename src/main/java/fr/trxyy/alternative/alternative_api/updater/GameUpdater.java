@@ -26,7 +26,6 @@ import fr.trxyy.alternative.alternative_api.minecraft.Arch;
 import fr.trxyy.alternative.alternative_api.minecraft.CompatibilityRule;
 import fr.trxyy.alternative.alternative_api.minecraft.MinecraftLibrary;
 import fr.trxyy.alternative.alternative_api.minecraft.MinecraftVersion;
-import fr.trxyy.alternative.alternative_api.minecraft.CompatibilityRule.Action;
 import fr.trxyy.alternative.alternative_api.utils.FileUtil;
 import fr.trxyy.alternative.alternative_api.utils.GameUtils;
 import fr.trxyy.alternative.alternative_api.utils.JsonUtil;
@@ -50,7 +49,10 @@ public class GameUpdater extends Thread {
 	private ExecutorService jarsExecutor = Executors.newFixedThreadPool(5);
 	/** PROGRESS BAR */
 	public LauncherProgressBar fakeProgressBar;
-	private String currentDownloadingFile = "";
+	private String currentDownloadingText = "";
+	/** TRY FAKE PROGRESS */
+	public int downloadedFiles;
+	public int needToDownload;
 
 	public void reg(GameEngine gameEngine) {
 		this.engine = gameEngine;
@@ -71,46 +73,47 @@ public class GameUpdater extends Thread {
 	@Override
 	public void run() {
 		/** --------------------------------------  */
-		this.setDownloadingFileName("Mise à jour en cours de Minecraft " + this.getEngine().getGameVersion().getVersion());
-		verifier = new GameVerifier(engine);
+		this.setCurrentInfoText("Mise à jour en cours de Minecraft " + this.getEngine().getGameVersion().getVersion());
+		this.verifier = new GameVerifier(this.engine);
 		Logger.log("Getting ignore/delete list   [Extra Step]");
 		Logger.log("========================================");
-		verifier.getIgnoreList();
-		verifier.getDeleteList();
+		this.verifier.getIgnoreList();
+		this.verifier.getDeleteList();
 		Logger.log("\n\n");
 		Logger.log("=============UPDATING GAME==============");
 		Logger.log("Indexing version              [Step 1/5]");
-		this.setDownloadingFileName("===== Recuperation d'un fichier index... (version)");
+		this.setCurrentInfoText("===== Recuperation d'un fichier index... (version)");
 		Logger.log("========================================");
 		this.indexVersion();
 		Logger.log("Indexing assets               [Step 2/5]");
-		this.setDownloadingFileName("===== Recuperation d'un fichier index... (assets)");
+		this.setCurrentInfoText("===== Recuperation d'un fichier index... (assets)");
 		Logger.log("========================================");
 		this.indexAssets();
-		if (!engine.getGameStyle().equals(GameStyle.VANILLA)) {
+		if (!this.engine.getGameStyle().equals(GameStyle.VANILLA)) {
 			Logger.log("Indexing custom jars        [Extra Step]");
-			this.setDownloadingFileName("===== Recuperation d'un fichier index... (fichiers persos)");
+			this.setCurrentInfoText("===== Recuperation d'un fichier index... (fichiers persos)");
 			Logger.log("========================================");
 			GameParser.getFilesToDownload(engine);
+//			Logger.log("files: " + needToDownload);
 		}
 		Logger.log("Updating assets               [Step 3/5]");
-		this.setDownloadingFileName("===== Telechargement des assets");
+		this.setCurrentInfoText("===== Telechargement des assets");
 		Logger.log("========================================");
 		this.updateAssets();
 		Logger.log("Updating jars/libraries       [Step 4/5]");
-		this.setDownloadingFileName("===== Telechargement des librairies...");
+		this.setCurrentInfoText("===== Telechargement des librairies...");
 		Logger.log("========================================");
 		this.updateJars();
 		if (!engine.getGameStyle().equals(GameStyle.VANILLA)) {
 			Logger.log("Updating custom jars        [Extra Step]");
-			this.setDownloadingFileName("===== Telechargement des fichiers persos...");
+			this.setCurrentInfoText("===== Telechargement des fichiers persos...");
 			Logger.log("========================================");
 			this.updateCustomJars();
 		}
 		Logger.log("Cleaning installation         [Step 5/5]");
-		this.setDownloadingFileName("===== Verification de l'installation...");
+		this.setCurrentInfoText("===== Verification de l'installation...");
 		Logger.log("========================================");
-		verifier.verify();
+		this.verifier.verify();
 		Logger.log("\n\n");
 		Logger.log("========================================");
 		Logger.log("|      Update Finished. Launching.     |");
@@ -214,9 +217,9 @@ public class GameUpdater extends Thread {
 			if (!this.hasCustomJar) {
 				this.jarsExecutor.submit(downloadTask3);
 			}
-			else {
-				Logger.log("Client personnalise requis, annulation du telechargement du client officiel.");
-			}
+			/**
+			 * On annule le telechargement du client si on doit telecharger un client custom
+			 */
 		}
 		this.jarsExecutor.shutdown();
 
@@ -250,8 +253,8 @@ public class GameUpdater extends Thread {
 			if ((!local.exists()) || (!FileUtil.matchSHA1(local, asset.getHash()))) {
 				if ((!local.exists()) && (mc.exists()) && (FileUtil.matchSHA1(mc, asset.getHash()))) {
 					this.assetsExecutor.submit(new Duplicator(mc, local));
-//					Logger.log("Copying asset " + local.getName());
-					this.setDownloadingFileName("Copie d'un asset déja existant (.minecraft) '" + local.getName() + "'");
+					Logger.log("Copying asset " + local.getName());
+					this.setCurrentInfoText("Copie d'un asset déja existant (.minecraft) '" + local.getName() + "'");
 				} else {
 					Downloader downloadTask = new Downloader(local, toURL(asset.getHash()), asset.getHash(), engine);
 					if (downloadTask.requireUpdate()) {
@@ -338,7 +341,7 @@ public class GameUpdater extends Thread {
 	}
 	
 	private File getAsset(String hash) {
-		File assetsDir = engine.getGameFolder().getAssetsDir();
+		File assetsDir = this.engine.getGameFolder().getAssetsDir();
 		File mcObjectsDir = new File(assetsDir, "objects");
 		File hex = new File(mcObjectsDir, hash.substring(0, 2));
 		return new File(hex, hash);
@@ -356,17 +359,18 @@ public class GameUpdater extends Thread {
 	}
 	
 	
-	public static void downloadFile(String fileUrl, File file) {
+	public void downloadFile(String fileUrl, File file) {
 		Logger.log("GET >>  " + file.getAbsolutePath());
 		Logger.log("FROM >> " + fileUrl);
+		this.setCurrentInfoText("Téléchargement '" + file.getName() + "'");
 		try {
-			URL url = new URL(fileUrl.replace(" ", ""));
+			URL url = new URL(fileUrl.replace(" ", "%20"));
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.addRequestProperty("User-Agent", "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.124 Safari/537.36");
 			if (!file.exists()) {
 				file.getParentFile().mkdirs();
 				file.createNewFile();
-			}
+			}			
 			BufferedInputStream in = new BufferedInputStream(connection.getInputStream());
 			FileOutputStream fos = new FileOutputStream(file);
 			BufferedOutputStream bout = new BufferedOutputStream(fos, 1024);
@@ -387,10 +391,10 @@ public class GameUpdater extends Thread {
 	}
 
 	public String getDownloadingFileName() {
-		return this.currentDownloadingFile;
+		return this.currentDownloadingText;
 	}
 
-	public void setDownloadingFileName(String name) {
-		this.currentDownloadingFile = name;
+	public void setCurrentInfoText(String name) {
+		this.currentDownloadingText = name;
 	}
 }

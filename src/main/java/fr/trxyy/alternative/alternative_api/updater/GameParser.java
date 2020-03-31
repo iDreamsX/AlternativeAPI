@@ -23,7 +23,7 @@ public class GameParser {
 	public static void getFilesToDownload(GameEngine engine) {
 		Logger.log("Preparation de la mise a jour.");
 		try {
-			final URL resourceUrl = new URL(engine.getGameLinks().getCustomFilesUrl() + "downloads.xml");
+			final URL resourceUrl = new URL(engine.getGameLinks().getCustomFilesUrl());
 			final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			final DocumentBuilder db = dbf.newDocumentBuilder();
 			final Document doc = db.parse(resourceUrl.openConnection(Proxy.NO_PROXY).getInputStream());
@@ -34,7 +34,7 @@ public class GameParser {
 				final Node node = nodeLst.item(i);
 				if (node.getNodeType() == 1) {
 	                  final Element element = (Element) node;
-	                  final String key = element.getElementsByTagName("Key").item(0).getChildNodes().item(0).getNodeValue().replace(" ", "").replace("\n", "");
+	                  final String key = element.getElementsByTagName("Key").item(0).getChildNodes().item(0).getNodeValue().replace("\n", ""); // .replace(" ", "%20")
 	                  String etag = element.getElementsByTagName("ETag") != null ? element.getElementsByTagName("ETag").item(0).getChildNodes().item(0).getNodeValue() : "-";
 	                  final long size = Long.parseLong(element.getElementsByTagName("Size").item(0).getChildNodes().item(0).getNodeValue());
 
@@ -53,6 +53,7 @@ public class GameParser {
 										if (!(engine.getGameLinks().getCustomFilesUrl() + key).endsWith("/")) {
 											if (!key.contains("downloads.xml")) {
 												engine.getGameUpdater().files.put(key, new LauncherFile(size, engine.getGameLinks().getCustomFilesUrl() + key, localFile.getAbsolutePath()));
+//												engine.getGameUpdater().needToDownload++;
 											}
 										}
 									}
@@ -60,6 +61,7 @@ public class GameParser {
 									if (!(engine.getGameLinks().getCustomFilesUrl() + key).endsWith("/")) {
 										if (!key.contains("downloads.xml")) {
 										engine.getGameUpdater().files.put(key, new LauncherFile(size, engine.getGameLinks().getCustomFilesUrl() + key, localFile.getAbsolutePath()));
+//										engine.getGameUpdater().needToDownload++;
 										}
 									}
 								}
@@ -67,6 +69,7 @@ public class GameParser {
 								if (!(engine.getGameLinks().getCustomFilesUrl() + key).endsWith("/")) {
 									if (!key.contains("downloads.xml")) {
 									engine.getGameUpdater().files.put(key, new LauncherFile(size, engine.getGameLinks().getCustomFilesUrl() + key, localFile.getAbsolutePath()));
+//									engine.getGameUpdater().needToDownload++;
 								}
 								}
 							}
@@ -81,8 +84,10 @@ public class GameParser {
 			final long end = System.nanoTime();
 			final long delta = end - start;
 			Logger.log("Temps (delta) pour comparer les ressources: " + delta / 1000000L + " ms");
+			Logger.log("Depuis: " + resourceUrl);
 		} catch (final Exception ex) {
 			Logger.log("Impossible de telecharger les ressources (" + ex + ")");
+			ex.printStackTrace();
 		}
 	}
 

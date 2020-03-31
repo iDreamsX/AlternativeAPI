@@ -5,7 +5,6 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Random;
 
 import javax.crypto.Cipher;
@@ -30,7 +29,7 @@ public class UsernameSaver {
 		if (!this.lastLogin.exists()) {
 			try {
 				this.lastLogin.createNewFile();
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

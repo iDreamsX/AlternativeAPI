@@ -1,5 +1,6 @@
 package fr.trxyy.alternative.alternative_api;
 
+import fr.trxyy.alternative.alternative_api.maintenance.GameMaintenance;
 import fr.trxyy.alternative.alternative_api.updater.GameUpdater;
 
 public class GameEngine {
@@ -14,6 +15,8 @@ public class GameEngine {
 	private GameConnect gameConnect;
 	private GameMemory gameMemory;
 	private GameUpdater gameUpdater;
+	private GameArguments gameArguments;
+	private GameMaintenance gameMaintenance;
 	
 	public GameEngine(GameFolder folder, LauncherPreferences lSize, GameVersion version, GameStyle style, GameSize size) {
 		this.gameFolder = folder;
@@ -72,6 +75,10 @@ public class GameEngine {
 	public void reg(GameMemory memory) {
 		this.gameMemory = memory;
 	}
+	
+	public void reg(GameArguments arguments) {
+		this.gameArguments = arguments;
+	}
 
 	public LauncherPreferences getLauncherPreferences() {
 		return this.launcherSize;
@@ -119,5 +126,17 @@ public class GameEngine {
 
 	public GameUpdater getGameUpdater() {
 		return this.gameUpdater;
+	}
+	
+	public GameArguments getGameArguments() {
+		return this.gameArguments;
+	}
+
+	public void reg(GameMaintenance mainte) {
+		this.gameMaintenance = mainte;
+	}
+	
+	public GameMaintenance getGameMaintenance() {
+		return this.gameMaintenance;
 	}
 }

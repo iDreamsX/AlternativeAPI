@@ -40,8 +40,44 @@ public class GameRunner {
 	
     public Process launch() throws Exception
     {
-        ProcessBuilder builder = new ProcessBuilder();
-        ArrayList<String> commands = new ArrayList<String>();
+        ProcessBuilder processBuilder = new ProcessBuilder();
+		processBuilder.directory(engine.getGameFolder().getGameDir());
+		processBuilder.redirectErrorStream(true);
+		processBuilder.command(getLaunchCommand());
+		String cmds = "";
+//		String str_[] = engine.getGameVersion().getArguments().split(" ");
+//		List<String> arguments = Arrays.asList(str_);
+		for (String command : getLaunchCommand()) {
+			cmds += command + " ";
+		}
+		this.engine.getGameUpdater().setCurrentInfoText("Lancement de Minecraft " + this.engine.getGameVersion().getVersion() + "...");
+		Logger.err("Lancement: " + cmds);
+		Logger.log("" + generateLot());
+		try {
+			Process process = processBuilder.start();
+			String line;
+			BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			while ((line = input.readLine()) != null) {
+				this.engine.getGameUpdater().setCurrentInfoText(line);
+//				if (line.contains("Stopping!")) {
+//					Platform.exit();
+//					System.exit(0);
+//				}
+				Logger.log(line);
+			}
+			input.close();
+			if (!process.isAlive()) {
+				Platform.exit();
+				System.exit(0);
+			}
+			return process;
+		} catch (IOException e) {
+			throw new Exception("Cannot launch !", e);
+		}
+	}
+    
+	private ArrayList<String> getLaunchCommand() {
+		ArrayList<String> commands = new ArrayList();
 		OperatingSystem os = OperatingSystem.getCurrentPlatform();
         commands.add(OperatingSystem.getJavaPath());
         commands.add("-XX:-UseAdaptiveSizePolicy");
@@ -54,40 +90,37 @@ public class GameRunner {
 		} else if (os.equals(OperatingSystem.WINDOWS)) {
 			commands.add("-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump");
 		}
+		commands.add("-Djava.library.path=" + engine.getGameFolder().getNativesDir().getAbsolutePath());
 		commands.add("-Dfml.ignoreInvalidMinecraftCertificates=true");
 		commands.add("-Dfml.ignorePatchDiscrepancies=true");
 		
 		boolean is32Bit = "32".equals(System.getProperty("sun.arch.data.model"));
-		String defaultArgument = is32Bit ? "-Xmx512M -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:-UseAdaptiveSizePolicy -Xmn128M" : "-Xmx1G -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:-UseAdaptiveSizePolicy -Xmn128M";
+		String defaultArgument = is32Bit ? "-Xmx512M -Xmn128M" : "-Xmx1G -Xmn128M";
 		if (engine.getGameMemory() != null) {
-			defaultArgument = is32Bit ? "-Xmx512M -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:-UseAdaptiveSizePolicy -Xmn128M" : "-Xmx" + engine.getGameMemory().getCount() + " -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:-UseAdaptiveSizePolicy -Xmn128M";
+			defaultArgument = is32Bit ? "-Xmx512M -Xmn128M" : "-Xmx" + engine.getGameMemory().getCount() + " -Xmn128M";
 		}
-		
 		String str[] = defaultArgument.split(" ");
 		List<String> args = Arrays.asList(str);
 		commands.addAll(args);
 		
-		commands.add("-Djava.library.path=" + engine.getGameFolder().getNativesDir().getAbsolutePath());
-		commands.add("-Dminecraft.launcher.brand=Minecraft");
-		commands.add("-Dminecraft.launcher.version=21");
 		
 		commands.add("-cp");
 		commands.add("\"" + GameUtils.constructClasspath(engine) + "\"");
 		commands.add(engine.getGameStyle().getMainClass());
 		
 		String str_[] = engine.getGameVersion().getArguments().split(" ");
-		List<String> args_ = Arrays.asList(str_);
-		commands.addAll(args_);
+		List<String> arguments = Arrays.asList(str_);
+		commands.addAll(arguments);
 		
-		/** ----- Size of window -----*/
-		commands.add("--width=" + engine.getGameSize().getWidth());
-		commands.add("--height=" + engine.getGameSize().getHeight());
+		/** ----- Addons arguments ----- */
+		if (engine.getGameArguments() != null) {
+			commands.addAll(engine.getGameArguments().getArguments());
+		}
 		
-		/** ----- Tweak Class if required ----- */
-		if (!engine.getGameStyle().equals(GameStyle.VANILLA)) {
-			if (!engine.getGameStyle().equals(GameStyle.FORGE_1_13_HIGHER)) {
-				commands.add("--tweakClass " + engine.getGameStyle().getTweakArgument());
-			}
+		/** ----- Size of window ----- */
+		if (engine.getGameSize() != null) {
+			commands.add("--width=" + engine.getGameSize().getWidth());
+			commands.add("--height=" + engine.getGameSize().getHeight());
 		}
 		
 		/** ----- Change properties of Forge (1.13+) ----- */
@@ -106,35 +139,13 @@ public class GameRunner {
 			commands.add("--server=" + engine.getGameConnect().getIp());
 			commands.add("--port=" + engine.getGameConnect().getPort());
 		}
-		builder.directory(engine.getGameFolder().getGameDir());
-		builder.redirectErrorStream(true);
-		builder.command(commands);
-
-		String cmds = "";
-		for (String command : commands)
-			cmds += command + " ";
 		
-		this.engine.getGameUpdater().setDownloadingFileName("Lancement de Minecraft " + this.engine.getGameVersion().getVersion() + "...");
-		Logger.err("FROM: " + cmds);
-		Logger.log("" + generateLot());
-
-		try {
-			Process p = builder.start();
-			String line;
-			BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			while ((line = input.readLine()) != null) {
-				System.out.println(line);
-			}
-			input.close();
-			
-			if (!p.isAlive()) {
-				Platform.exit();
-				System.exit(0);
-			}
-			return p;
-		} catch (IOException e) {
-			throw new Exception("Cannot launch !", e);
+		/** ----- Tweak Class if required ----- */
+		if (engine.getGameStyle().equals(GameStyle.FORGE_1_7_10_OLD) || engine.getGameStyle().equals(GameStyle.FORGE_1_8_TO_1_12_2)) {
+			commands.add("--tweakClass");
+			commands.add(engine.getGameStyle().getTweakArgument());
 		}
+		return commands;
 	}
 
 	public void patchArguments() {

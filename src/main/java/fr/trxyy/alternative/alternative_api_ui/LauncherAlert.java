@@ -16,7 +16,7 @@ public class LauncherAlert {
 		alert.setContentText(text);
 		alert.show();
 	}
-	
+
 	public LauncherAlert(String title, String text) {
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle("Erreur");

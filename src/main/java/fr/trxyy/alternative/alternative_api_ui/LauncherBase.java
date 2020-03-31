@@ -1,11 +1,13 @@
 package fr.trxyy.alternative.alternative_api_ui;
 
 import java.awt.Point;
+import java.io.IOException;
 
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import fr.trxyy.alternative.alternative_api.GameEngine;
+import fr.trxyy.alternative.alternative_api.maintenance.Maintenance;
 import fr.trxyy.alternative.alternative_api.utils.Logger;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -65,19 +67,39 @@ public class LauncherBase {
 			});
 		}
 		stage.setScene(scene);
-		stage.show();
-		displayCopyrights();
+		this.displayCopyrights();
+		
+		if (engine.getGameMaintenance() != null) {
+			if (engine.getGameMaintenance().getMaintenance().equals(Maintenance.USE)) {
+				String result = "";
+				try {
+					result = engine.getGameMaintenance().readMaintenance();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				if (!result.equals("Ok")) {
+					new LauncherAlert("" + result, AlertType.WARNING);
+				} else {
+					stage.show();
+				}
+			} else {
+				stage.show();
+			}
+		} else {
+			stage.show();
+		}
+
 	}
 
 	public void setIconImage(Stage primaryStage, Image img) {
 		primaryStage.getIcons().add(img);
 	}
 
-	private static void displayCopyrights() {
+	private void displayCopyrights() {
 		Logger.log("========================================");
 		Logger.log("|    Thanks for using AlternativeAPI   |");
 		Logger.log("|          AlternativeAPI 1.0          |");
-		Logger.log("|           Version: 1.0-BETA          |");
+		Logger.log("|             Version: 1.2             |");
 		Logger.log("|           Author(s): Trxyy           |");
 		Logger.log("========================================");
 	}	
