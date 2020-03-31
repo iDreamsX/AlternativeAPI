@@ -1,2 +1,2 @@
 # AlternativeAPI
- AlternativeAPI for Minecraft Launchers
+ AlternativeAPI, a library for Minecraft Launchers
