@@ -72,6 +72,10 @@ public class GameEngine {
 		this.gameConnect = connect;
 	}
 	
+	public void reg(GameForge forge) {
+		this.gameForge = forge;
+	}
+	
 	public void reg(GameMemory memory) {
 		this.gameMemory = memory;
 	}

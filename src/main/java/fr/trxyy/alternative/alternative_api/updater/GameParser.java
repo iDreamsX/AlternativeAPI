@@ -51,26 +51,20 @@ public class GameParser {
 									final String localMd5 = FileUtil.getMD5(localFile);
 									if (!localMd5.equals(etag)) {
 										if (!(engine.getGameLinks().getCustomFilesUrl() + key).endsWith("/")) {
-											if (!key.contains("downloads.xml")) {
 												engine.getGameUpdater().files.put(key, new LauncherFile(size, engine.getGameLinks().getCustomFilesUrl() + key, localFile.getAbsolutePath()));
-//												engine.getGameUpdater().needToDownload++;
-											}
+												engine.getGameUpdater().filesToDownload++;
 										}
 									}
 								} else {
 									if (!(engine.getGameLinks().getCustomFilesUrl() + key).endsWith("/")) {
-										if (!key.contains("downloads.xml")) {
 										engine.getGameUpdater().files.put(key, new LauncherFile(size, engine.getGameLinks().getCustomFilesUrl() + key, localFile.getAbsolutePath()));
-//										engine.getGameUpdater().needToDownload++;
-										}
+										engine.getGameUpdater().filesToDownload++;
 									}
 								}
 							} else {
 								if (!(engine.getGameLinks().getCustomFilesUrl() + key).endsWith("/")) {
-									if (!key.contains("downloads.xml")) {
 									engine.getGameUpdater().files.put(key, new LauncherFile(size, engine.getGameLinks().getCustomFilesUrl() + key, localFile.getAbsolutePath()));
-//									engine.getGameUpdater().needToDownload++;
-								}
+									engine.getGameUpdater().filesToDownload++;
 								}
 							}
 

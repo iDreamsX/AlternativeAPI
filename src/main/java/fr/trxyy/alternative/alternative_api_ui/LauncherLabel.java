@@ -23,6 +23,11 @@ public class LauncherLabel extends Label {
 		setLayoutX(posX);
 		setLayoutY(posY);
 	}
+	
+	public void setPosition(double posX, double posY) {
+		setLayoutX(posX);
+		setLayoutY(posY);
+	}
 
 	public void setAction(EventHandler<? super MouseEvent> value) {
 		onMouseClickedProperty().set(value);

@@ -22,7 +22,7 @@ public class GameLinks {
 		this.MAINTENANCE = baseUrl + "status.cfg";
 	}
 
-	public String getDownloadUrl() {
+	public String getBaseUrl() {
 		return this.BASE_URL;
 	}
 

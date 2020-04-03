@@ -29,10 +29,12 @@ public class UsernameSaver {
 		if (!this.lastLogin.exists()) {
 			try {
 				this.lastLogin.createNewFile();
+				this.writeUsername("Pseudonyme");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+		readUsername();
 	}
 
 	public void readUsername() {

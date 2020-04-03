@@ -1,6 +1,7 @@
 package fr.trxyy.alternative.alternative_api.build;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
@@ -48,7 +49,6 @@ public class GameRunner {
 		for (String command : getLaunchCommand()) {
 			cmds += command + " ";
 		}
-		this.engine.getGameUpdater().setCurrentInfoText("Lancement de Minecraft " + this.engine.getGameVersion().getVersion() + "...");
 		Logger.err("Lancement: " + cmds);
 		Logger.log("" + generateLot());
 		try {
@@ -56,7 +56,6 @@ public class GameRunner {
 			String line;
 			BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			while ((line = input.readLine()) != null) {
-				this.engine.getGameUpdater().setCurrentInfoText(line);
 				if (line.contains("Stopping!")) {
 					Platform.exit();
 					System.exit(0);
@@ -71,7 +70,7 @@ public class GameRunner {
 	}
     
 	private ArrayList<String> getLaunchCommand() {
-		ArrayList<String> commands = new ArrayList();
+		ArrayList<String> commands = new ArrayList<String>();
 		OperatingSystem os = OperatingSystem.getCurrentPlatform();
         commands.add(OperatingSystem.getJavaPath());
         commands.add("-XX:-UseAdaptiveSizePolicy");
@@ -92,6 +91,7 @@ public class GameRunner {
 		String defaultArgument = is32Bit ? "-Xmx512M -Xmn128M" : "-Xmx1G -Xmn128M";
 		if (engine.getGameMemory() != null) {
 			defaultArgument = is32Bit ? "-Xmx512M -Xmn128M" : "-Xmx" + engine.getGameMemory().getCount() + " -Xmn128M";
+			Logger.err("ERR");
 		}
 		String str[] = defaultArgument.split(" ");
 		List<String> args = Arrays.asList(str);
@@ -141,6 +141,94 @@ public class GameRunner {
 		}
 		return commands;
 	}
+	
+	private ArrayList<String> getLaunchCommandsForge() {
+		ArrayList<String> commands = new ArrayList<String>();
+		File javaPath = new File("G:\\Minecraft Launcher\\runtime\\jre-x64\\bin\\java");
+        commands.add(javaPath.getAbsolutePath());
+		
+		commands.add("-cp");
+		commands.add(constructClasspath());
+		
+		commands.add("cpw.mods.modlauncher.Launcher");
+		
+		commands.add("--username");
+		commands.add("MonUsername");
+		
+		commands.add("--version");
+		commands.add("1.13.2-forge-25.0.219");
+		
+		commands.add("--gameDir");
+		File workDSir = GameUtils.getWorkingDirectory("minecraft");
+		commands.add(workDSir.getAbsolutePath());
+		
+		commands.add("--assetsDir");
+		File assets = new File(workDSir, "assets");
+		commands.add(assets.getAbsolutePath());
+		
+		commands.add("--assetIndex");
+		commands.add("1.13.1");
+		
+		commands.add("--uuid");
+		commands.add("monuuidtropcool");
+		
+		commands.add("--accessToken");
+		commands.add("montokendaccestropcool");
+		
+		commands.add("--userType");
+		commands.add("mojang");
+		
+		commands.add("--versionType");
+		commands.add("release");
+		
+		/** ----- Change properties of Forge (1.13+) ----- */
+		commands.add("--launchTarget");
+		commands.add(GameForge.getLaunchTarget());
+		
+		commands.add("--fml.forgeVersion");
+		commands.add(GameForge.getForgeVersion());
+		
+		commands.add("--fml.mcVersion");
+		commands.add(GameForge.getMcVersion());
+		
+		commands.add("--fml.forgeGroup");
+		commands.add(GameForge.getForgeGroup());
+		
+		commands.add("--fml.mcpVersion");
+		commands.add(GameForge.getMcpVersion());
+		return commands;
+	}
+
+	public static String constructClasspath() {
+		String result = "";
+		File workDSir = GameUtils.getWorkingDirectory("minecraft");
+		File libDir = new File(workDSir, "libraries");
+		File jar = new File(workDSir, "versions/1.13.2-forge-25.0.219/1.13.2-forge-25.0.219.jar");
+		ArrayList<File> libs = list(libDir);
+		String separator = System.getProperty("path.separator");
+		for (File lib : libs) {
+			result += lib.getAbsolutePath() + separator;
+		}
+		result += jar;
+		return result;
+	}
+	
+	public static ArrayList<File> list(File folder) {
+		ArrayList<File> files = new ArrayList<File>();
+		if (!folder.isDirectory())
+			return files;
+
+		File[] folderFiles = folder.listFiles();
+		if (folderFiles != null)
+			for (File f : folderFiles)
+				if (f.isDirectory())
+					files.addAll(list(f));
+				else
+					files.add(f);
+
+		return files;
+	}
+
 
 	public void patchArguments() {
 		this.engine.getGameVersion().setArguments(this.engine.getGameVersion().getArguments()

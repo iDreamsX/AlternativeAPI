@@ -10,12 +10,12 @@ public class LauncherButton extends Button {
 	public LauncherButton(Pane root) {
 		setUnHover(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent event) {
-				setOpacity(0.80);
+				setOpacity(1.0);
 			}
 		});
 		setHover(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent event) {
-				setOpacity(1.0);
+				setOpacity(0.80);
 			}
 		});
 		root.getChildren().add(this);

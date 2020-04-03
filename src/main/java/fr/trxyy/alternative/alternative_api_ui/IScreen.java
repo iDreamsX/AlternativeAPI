@@ -1,6 +1,7 @@
 package fr.trxyy.alternative.alternative_api_ui;
 
 import java.awt.Desktop;
+import java.awt.MouseInfo;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -11,7 +12,7 @@ import javax.imageio.ImageIO;
 import fr.trxyy.alternative.alternative_api.GameEngine;
 import fr.trxyy.alternative.alternative_api.utils.Logger;
 import fr.trxyy.alternative.alternative_api.utils.ResourceLocation;
-import javafx.animation.Timeline;
+import javafx.animation.AnimationTimer;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -21,20 +22,37 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 
 public class IScreen {
-	private static ResourceLocation RESOURCE_LOCATION = new ResourceLocation();
-	public Timeline timeline;
+	private ResourceLocation RESOURCE_LOCATION = new ResourceLocation();
+	private ImageView logoImage;
+	private int posX = 0;
+	private int posY = 0;
 
-	public IScreen() {
+	public void drawLogo(GameEngine engine, Image img, int posX_, int posY_, int sizeX, int sizeY, Pane root, Mover animate) {
+		this.logoImage = new ImageView();
+		this.logoImage.setImage(img);
+		this.logoImage.setFitWidth(sizeX);
+		this.logoImage.setFitHeight(sizeY);
+	    this.posX = posX_;
+	    this.posY = posY_;
+	    this.logoImage.setLayoutX(this.posX);
+	    this.logoImage.setLayoutY(this.posY);
+		root.getChildren().add(this.logoImage);
+		if (animate.equals(Mover.MOVE)) {
+			animateLogo();
+		}
 	}
-
-	public void drawLogo(GameEngine engine, Image img, int posX, int posY, int sizeX, int sizeY, Pane root) {
-		ImageView logoImage = new ImageView();
-		logoImage.setImage(img);
-		logoImage.setFitWidth(sizeX);
-		logoImage.setFitHeight(sizeY);
-		logoImage.setLayoutX(posX);
-		logoImage.setLayoutY(posY);
-		root.getChildren().add(logoImage);
+	
+	private void animateLogo() {
+		AnimationTimer animate = new AnimationTimer() {
+			public void handle(long now) {
+				float multplicatorSize = 54.25F;
+				int mouseX = (MouseInfo.getPointerInfo().getLocation()).x;
+				int mouseY = (MouseInfo.getPointerInfo().getLocation()).y;
+				logoImage.setLayoutX((posX - mouseX / multplicatorSize));
+				logoImage.setLayoutY((posY - mouseY / multplicatorSize));
+			}
+		};
+		animate.start();
 	}
 
 	public void drawBackgroundImage(GameEngine engine, Pane root, String img) {
@@ -62,6 +80,7 @@ public class IScreen {
 	public Image loadImage(String image) {
 		BufferedImage bufferedImage = null;
 		try {
+			Logger.log(" " + getResourceLocation() + image);
 			bufferedImage = ImageIO.read(IScreen.class.getResourceAsStream(getResourceLocation() + image));
 		} catch (IOException e) {
 			Logger.log("Echec du chargement de la ressource demandée.");
