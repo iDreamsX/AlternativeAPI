@@ -102,8 +102,8 @@ public class LauncherBase {
 	private void displayCopyrights() {
 		Logger.log("========================================");
 		Logger.log("|    Thanks for using AlternativeAPI   |");
-		Logger.log("|          AlternativeAPI 1.0          |");
-		Logger.log("|             Version: 1.2             |");
+		Logger.log("|          AlternativeAPI 1.2          |");
+		Logger.log("|           Version: RELEASE           |");
 		Logger.log("|           Author(s): Trxyy           |");
 		Logger.log("========================================");
 	}	
