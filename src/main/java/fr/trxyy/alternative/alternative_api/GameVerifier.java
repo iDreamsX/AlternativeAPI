@@ -12,8 +12,8 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
-import fr.trxyy.alternative.alternative_api.utils.FileUtil;
 import fr.trxyy.alternative.alternative_api.utils.Logger;
+import fr.trxyy.alternative.alternative_api.utils.file.FileUtil;
 
 public class GameVerifier {
 	

@@ -1,6 +1,6 @@
 package fr.trxyy.alternative.alternative_api.assets;
 
-import fr.trxyy.alternative.alternative_api.minecraft.DownloadInfo;
+import fr.trxyy.alternative.alternative_api.minecraft.json.DownloadInfo;
 
 public class AssetIndexInfo extends DownloadInfo {
 	protected String id;

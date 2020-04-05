@@ -15,10 +15,10 @@ import fr.trxyy.alternative.alternative_api.GameEngine;
 import fr.trxyy.alternative.alternative_api.GameForge;
 import fr.trxyy.alternative.alternative_api.GameStyle;
 import fr.trxyy.alternative.alternative_api.account.Session;
-import fr.trxyy.alternative.alternative_api.utils.FileUtil;
-import fr.trxyy.alternative.alternative_api.utils.GameUtils;
 import fr.trxyy.alternative.alternative_api.utils.Logger;
 import fr.trxyy.alternative.alternative_api.utils.OperatingSystem;
+import fr.trxyy.alternative.alternative_api.utils.file.FileUtil;
+import fr.trxyy.alternative.alternative_api.utils.file.GameUtils;
 import javafx.application.Platform;
 
 public class GameRunner {

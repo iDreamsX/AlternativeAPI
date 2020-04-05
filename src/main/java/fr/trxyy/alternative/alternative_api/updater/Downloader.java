@@ -8,8 +8,8 @@ import java.net.URL;
 
 import fr.trxyy.alternative.alternative_api.GameEngine;
 import fr.trxyy.alternative.alternative_api.GameVerifier;
-import fr.trxyy.alternative.alternative_api.utils.FileUtil;
 import fr.trxyy.alternative.alternative_api.utils.Logger;
+import fr.trxyy.alternative.alternative_api.utils.file.FileUtil;
 
 public class Downloader extends Thread {
 	private final String url;

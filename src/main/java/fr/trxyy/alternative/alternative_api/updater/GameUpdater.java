@@ -17,16 +17,16 @@ import fr.trxyy.alternative.alternative_api.account.Session;
 import fr.trxyy.alternative.alternative_api.assets.AssetIndex;
 import fr.trxyy.alternative.alternative_api.assets.AssetObject;
 import fr.trxyy.alternative.alternative_api.build.GameRunner;
-import fr.trxyy.alternative.alternative_api.minecraft.Arch;
-import fr.trxyy.alternative.alternative_api.minecraft.CompatibilityRule;
-import fr.trxyy.alternative.alternative_api.minecraft.MinecraftLibrary;
-import fr.trxyy.alternative.alternative_api.minecraft.MinecraftVersion;
-import fr.trxyy.alternative.alternative_api.utils.FileUtil;
-import fr.trxyy.alternative.alternative_api.utils.GameUtils;
-import fr.trxyy.alternative.alternative_api.utils.JsonUtil;
-import fr.trxyy.alternative.alternative_api.utils.LauncherFile;
+import fr.trxyy.alternative.alternative_api.minecraft.json.MinecraftLibrary;
+import fr.trxyy.alternative.alternative_api.minecraft.json.MinecraftVersion;
+import fr.trxyy.alternative.alternative_api.minecraft.utils.Arch;
+import fr.trxyy.alternative.alternative_api.minecraft.utils.CompatibilityRule;
 import fr.trxyy.alternative.alternative_api.utils.Logger;
-import fr.trxyy.alternative.alternative_api_ui.LauncherProgressBar;
+import fr.trxyy.alternative.alternative_api.utils.file.FileUtil;
+import fr.trxyy.alternative.alternative_api.utils.file.GameUtils;
+import fr.trxyy.alternative.alternative_api.utils.file.JsonUtil;
+import fr.trxyy.alternative.alternative_api.utils.file.LauncherFile;
+import fr.trxyy.alternative.alternative_api_ui.components.LauncherProgressBar;
 
 public class GameUpdater extends Thread {
 

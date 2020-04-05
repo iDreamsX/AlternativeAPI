@@ -14,9 +14,9 @@ import org.w3c.dom.NodeList;
 
 import fr.trxyy.alternative.alternative_api.GameEngine;
 import fr.trxyy.alternative.alternative_api.GameVerifier;
-import fr.trxyy.alternative.alternative_api.utils.FileUtil;
-import fr.trxyy.alternative.alternative_api.utils.LauncherFile;
 import fr.trxyy.alternative.alternative_api.utils.Logger;
+import fr.trxyy.alternative.alternative_api.utils.file.FileUtil;
+import fr.trxyy.alternative.alternative_api.utils.file.LauncherFile;
 
 public class GameParser {
 

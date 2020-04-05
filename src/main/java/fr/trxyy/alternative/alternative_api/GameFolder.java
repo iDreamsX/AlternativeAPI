@@ -2,7 +2,7 @@ package fr.trxyy.alternative.alternative_api;
 
 import java.io.File;
 
-import fr.trxyy.alternative.alternative_api.utils.GameUtils;
+import fr.trxyy.alternative.alternative_api.utils.file.GameUtils;
 
 public class GameFolder {
 
