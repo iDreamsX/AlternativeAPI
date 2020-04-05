@@ -16,9 +16,6 @@ public class Downloader extends Thread {
 	private final String sha1;
 	private final File file;
 	private GameEngine engine;
-	
-	public int downloadedSize;
-	public double percentage = 0.0D;
 
 	public void run() {
 		try {
@@ -58,9 +55,7 @@ public class Downloader extends Thread {
 			int read;
 
 			while ((read = bufferedInputStream.read(data, 0, 1024)) != -1) {
-		        downloadedSize += read;
 				fileOutputStream.write(data, 0, read);
-				percentage = engine.getGameUpdater().downloadedFiles * 100.0D / engine.getGameUpdater().filesToDownload;
 			}
 			engine.getGameUpdater().downloadedFiles++;
 		} finally {

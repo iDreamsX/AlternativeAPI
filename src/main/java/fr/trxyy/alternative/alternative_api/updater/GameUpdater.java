@@ -282,7 +282,7 @@ public class GameUpdater extends Thread {
 				if ((!local.exists()) && (mc.exists()) && (FileUtil.matchSHA1(mc, asset.getHash()))) {
 					this.assetsExecutor.submit(new Duplicator(mc, local));
 					Logger.log("Copying asset " + local.getName());
-					this.setCurrentInfoText("Copie d'une ressource");
+					this.setCurrentInfoText("Copie d'une ressource.");
 				} else {
 					Downloader downloadTask = new Downloader(local, toURL(asset.getHash()), asset.getHash(), engine);
 					if (downloadTask.requireUpdate()) {
