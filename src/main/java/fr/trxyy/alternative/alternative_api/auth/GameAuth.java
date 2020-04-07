@@ -34,7 +34,8 @@ public class GameAuth
 			isAuthed = true;
 		    session.setUsername(userName);
 		    session.setToken(TokenGenerator.generateToken(userName));
-		    session.setUuid(UUID.randomUUID().toString().replace("-", ""));
+//		    session.setUuid(UUID.randomUUID().toString().replace("-", ""));
+		    session.setUuid(new UUID(0L, 0L).toString());
 		}
 	}
   

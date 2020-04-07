@@ -9,7 +9,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.text.StrSubstitutor;
 
 import fr.trxyy.alternative.alternative_api.GameEngine;
 import fr.trxyy.alternative.alternative_api.GameForge;
@@ -29,7 +33,6 @@ public class GameRunner {
 	public GameRunner(GameEngine gameEngine, Session account) {
 		this.engine = gameEngine;
 		this.session = account;
-		this.patchArguments();
 		Logger.log("========================================");
 		Logger.log("Unpacking natives             [Step 5/7]");
 		Logger.log("========================================");
@@ -94,6 +97,8 @@ public class GameRunner {
 		commands.add("-Djava.library.path=" + engine.getGameFolder().getNativesDir().getAbsolutePath());
 		commands.add("-Dfml.ignoreInvalidMinecraftCertificates=true");
 		commands.add("-Dfml.ignorePatchDiscrepancies=true");
+        
+//		commands.add("-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump -Xmx2G -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M");
 		
 		boolean is32Bit = "32".equals(System.getProperty("sun.arch.data.model"));
 		String defaultArgument = is32Bit ? "-Xmx512M -Xmn128M" : "-Xmx1G -Xmn128M";
@@ -110,9 +115,9 @@ public class GameRunner {
 		commands.add("\"" + GameUtils.constructClasspath(engine) + "\"");
 		commands.add(engine.getGameStyle().getMainClass());
 		
-		String str_[] = engine.getGameVersion().getArguments().split(" ");
-		List<String> arguments = Arrays.asList(str_);
-		commands.addAll(arguments);
+        final String[] argsD = getMinecraftArguments();
+        List<String> arguments = Arrays.asList(argsD);
+        commands.addAll(arguments);
 		
 		/** ----- Addons arguments ----- */
 		if (engine.getGameArguments() != null) {
@@ -236,20 +241,26 @@ public class GameRunner {
 
 		return files;
 	}
+	
+	private String[] getMinecraftArguments() {
+		final Map<String, String> map = new HashMap<String, String>();
+		final StrSubstitutor substitutor = new StrSubstitutor(map);
+		final String[] split = this.engine.getGameVersion().getArguments().split(" ");
+		map.put("auth_player_name", this.session.getUsername());
+		map.put("auth_uuid", this.session.getUuid());
+		map.put("auth_access_token", this.session.getToken());
+		map.put("user_type", "legacy");
+		map.put("version_name", this.engine.getGameVersion().getVersion());
+		map.put("version_type", "release");
+		map.put("game_directory", this.engine.getGameFolder().getPlayDir().getAbsolutePath());
+		map.put("assets_root", this.engine.getGameFolder().getAssetsDir().getAbsolutePath());
+		map.put("assets_index_name", this.engine.getGameVersion().getAssetIndex());
+		map.put("user_properties", "{}");
 
+		for (int i = 0; i < split.length; i++)
+			split[i] = substitutor.replace(split[i]);
 
-	public void patchArguments() {
-		this.engine.getGameVersion().setArguments(this.engine.getGameVersion().getArguments()
-		.replace("${auth_player_name}", this.session.getUsername())
-		.replace("${auth_uuid}", this.session.getUuid())
-		.replace("${auth_access_token}", this.session.getToken())
-		.replace("${user_type}", "legacy")
-		.replace("${version_name}", this.engine.getGameVersion().getVersion())
-		.replace("${version_type}", "release")
-		.replace("${game_directory}", this.engine.getGameFolder().getPlayDir().getAbsolutePath())
-		.replace("${assets_root}", this.engine.getGameFolder().getAssetsDir().getAbsolutePath())
-		.replace("${assets_index_name}", this.engine.getGameVersion().getAssetIndex())
-		.replace("${user_properties}", "{}"));
+		return split;
 	}
 	
 	private void unpackNatives() {
