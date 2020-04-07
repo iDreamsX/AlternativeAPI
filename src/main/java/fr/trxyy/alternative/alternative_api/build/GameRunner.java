@@ -37,6 +37,14 @@ public class GameRunner {
 		Logger.log("Deleting unrequired Natives   [Step 6/7]");
 		Logger.log("========================================");
 		this.deleteFakeNatives();
+		if (engine.getStage() != null) {
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					engine.getStage().hide();
+				}
+			});
+		}
 	}
 	
     public Process launch() throws Exception
@@ -135,7 +143,7 @@ public class GameRunner {
 		}
 		
 		/** ----- Tweak Class if required ----- */
-		if (engine.getGameStyle().equals(GameStyle.FORGE_1_7_10_OLD) || engine.getGameStyle().equals(GameStyle.FORGE_1_8_TO_1_12_2)) {
+		if (engine.getGameStyle().equals(GameStyle.FORGE_1_7_10_OLD) || engine.getGameStyle().equals(GameStyle.FORGE_1_8_TO_1_12_2) || engine.getGameStyle().equals(GameStyle.OPTIFINE)) {
 			commands.add("--tweakClass");
 			commands.add(engine.getGameStyle().getTweakArgument());
 		}

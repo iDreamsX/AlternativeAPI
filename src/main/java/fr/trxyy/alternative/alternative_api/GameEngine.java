@@ -2,6 +2,8 @@ package fr.trxyy.alternative.alternative_api;
 
 import fr.trxyy.alternative.alternative_api.maintenance.GameMaintenance;
 import fr.trxyy.alternative.alternative_api.updater.GameUpdater;
+import fr.trxyy.alternative.alternative_api_ui.base.AlternativeBase;
+import javafx.stage.Stage;
 
 public class GameEngine {
 
@@ -17,6 +19,7 @@ public class GameEngine {
 	private GameUpdater gameUpdater;
 	private GameArguments gameArguments;
 	private GameMaintenance gameMaintenance;
+	private Stage fakeBase;
 	
 	public GameEngine(GameFolder folder, LauncherPreferences lSize, GameVersion version, GameStyle style, GameSize size) {
 		this.gameFolder = folder;
@@ -82,6 +85,14 @@ public class GameEngine {
 	
 	public void reg(GameArguments arguments) {
 		this.gameArguments = arguments;
+	}
+	
+	public void reg(Stage base) {
+		this.fakeBase = base;
+	}
+	
+	public Stage getStage() {
+		return this.fakeBase;
 	}
 
 	public LauncherPreferences getLauncherPreferences() {
