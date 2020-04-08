@@ -46,7 +46,7 @@ public class Downloader extends Thread {
 		BufferedInputStream bufferedInputStream = null;
 		FileOutputStream fileOutputStream = null;
 		try {
-			URL url_ = new URL(this.url);
+			URL url_ = new URL(this.url.replace(" ", "%20"));
 			bufferedInputStream = new BufferedInputStream(url_.openStream());
 			fileOutputStream = new FileOutputStream(this.file);
 			

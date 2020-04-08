@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang3.text.StrSubstitutor;
 
@@ -55,12 +56,13 @@ public class GameRunner {
         ProcessBuilder processBuilder = new ProcessBuilder();
 		processBuilder.directory(engine.getGameFolder().getGameDir());
 		processBuilder.redirectErrorStream(true);
-		processBuilder.command(getLaunchCommand());
+		processBuilder.command(getLaunchCommand()); // getLaunchCommandsForge
 		String cmds = "";
 		for (String command : getLaunchCommand()) {
 			cmds += command + " ";
 		}
-		Logger.err("Lancement: " + cmds);
+		String[] ary = cmds.split(" ");
+		Logger.err("Lancement: " + hideAccessToken(ary));
 		Logger.log("" + generateLot());
 		try {
 			Process process = processBuilder.start();
@@ -97,8 +99,6 @@ public class GameRunner {
 		commands.add("-Djava.library.path=" + engine.getGameFolder().getNativesDir().getAbsolutePath());
 		commands.add("-Dfml.ignoreInvalidMinecraftCertificates=true");
 		commands.add("-Dfml.ignorePatchDiscrepancies=true");
-        
-//		commands.add("-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump -Xmx2G -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M");
 		
 		boolean is32Bit = "32".equals(System.getProperty("sun.arch.data.model"));
 		String defaultArgument = is32Bit ? "-Xmx512M -Xmn128M" : "-Xmx1G -Xmn128M";
@@ -148,7 +148,7 @@ public class GameRunner {
 		}
 		
 		/** ----- Tweak Class if required ----- */
-		if (engine.getGameStyle().equals(GameStyle.FORGE_1_7_10_OLD) || engine.getGameStyle().equals(GameStyle.FORGE_1_8_TO_1_12_2) || engine.getGameStyle().equals(GameStyle.OPTIFINE)) {
+		if (engine.getGameStyle().equals(GameStyle.FORGE_1_7_10_OLD) || engine.getGameStyle().equals(GameStyle.FORGE_1_8_TO_1_12_2) || engine.getGameStyle().equals(GameStyle.OPTIFINE) || engine.getGameStyle().equals(GameStyle.ALTERNATIVE)) {
 			commands.add("--tweakClass");
 			commands.add(engine.getGameStyle().getTweakArgument());
 		}
@@ -159,71 +159,66 @@ public class GameRunner {
 		ArrayList<String> commands = new ArrayList<String>();
 		File javaPath = new File("G:\\Minecraft Launcher\\runtime\\jre-x64\\bin\\java");
         commands.add(javaPath.getAbsolutePath());
-		
+        
+		commands.add("-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump");
+		commands.add("-Djava.library.path=" + engine.getGameFolder().getNativesDir().getAbsolutePath());
+		commands.add("-Dfml.ignoreInvalidMinecraftCertificates=true");
+		commands.add("-Dfml.ignorePatchDiscrepancies=true");
+        commands.add("-Dminecraft.launcher.brand=minecraft-launcher");
+        commands.add("-Dminecraft.launcher.version=2.1.13508");
+        
 		commands.add("-cp");
-		commands.add(constructClasspath());
+		commands.add(GameUtils.constructClasspath(engine));
 		
 		commands.add("cpw.mods.modlauncher.Launcher");
 		
-		commands.add("--username");
-		commands.add("MonUsername");
+//		commands.add("--username");
+//		commands.add("Trxyy");
+//		
+//		commands.add("--version");
+//		commands.add("1.14.4-forge-28.2.0");
+//		
+//		commands.add("--gameDir");
+//		commands.add(engine.getGameFolder().getPlayDir().getAbsolutePath());
+//		
+//		commands.add("--assetsDir");
+//		commands.add(engine.getGameFolder().getAssetsDir().getAbsolutePath());
+//		
+//		commands.add("--assetIndex");
+//		commands.add("1.14");
+//		
+//		commands.add("--uuid");
+//		commands.add("0");
+//		
+//		commands.add("--accessToken");
+//		commands.add("0");
+//		
+//		commands.add("--userType");
+//		commands.add("mojang");
+//		
+//		commands.add("--versionType");
+//		commands.add("release");
 		
-		commands.add("--version");
-		commands.add("1.13.2-forge-25.0.219");
-		
-		commands.add("--gameDir");
-		File workDSir = GameUtils.getWorkingDirectory("minecraft");
-		commands.add(workDSir.getAbsolutePath());
-		
-		commands.add("--assetsDir");
-		File assets = new File(workDSir, "assets");
-		commands.add(assets.getAbsolutePath());
-		
-		commands.add("--assetIndex");
-		commands.add("1.13.1");
-		
-		commands.add("--uuid");
-		commands.add("monuuidtropcool");
-		
-		commands.add("--accessToken");
-		commands.add("montokendaccestropcool");
-		
-		commands.add("--userType");
-		commands.add("mojang");
-		
-		commands.add("--versionType");
-		commands.add("release");
+        final String[] argsD = getMinecraftArguments();
+        List<String> arguments = Arrays.asList(argsD);
+        commands.addAll(arguments);
 		
 		/** ----- Change properties of Forge (1.13+) ----- */
 		commands.add("--launchTarget");
-		commands.add(GameForge.getLaunchTarget());
+		commands.add("fmlclient");
 		
 		commands.add("--fml.forgeVersion");
-		commands.add(GameForge.getForgeVersion());
+		commands.add("28.2.0");
 		
 		commands.add("--fml.mcVersion");
-		commands.add(GameForge.getMcVersion());
+		commands.add("1.14.4");
 		
 		commands.add("--fml.forgeGroup");
-		commands.add(GameForge.getForgeGroup());
+		commands.add("net.minecraftforge");
 		
 		commands.add("--fml.mcpVersion");
-		commands.add(GameForge.getMcpVersion());
+		commands.add("20190829.143755");
 		return commands;
-	}
-
-	public static String constructClasspath() {
-		String result = "";
-		File workDSir = GameUtils.getWorkingDirectory("minecraft");
-		File libDir = new File(workDSir, "libraries");
-		File jar = new File(workDSir, "versions/1.13.2-forge-25.0.219/1.13.2-forge-25.0.219.jar");
-		ArrayList<File> libs = list(libDir);
-		String separator = System.getProperty("path.separator");
-		for (File lib : libs) {
-			result += lib.getAbsolutePath() + separator;
-		}
-		result += jar;
-		return result;
 	}
 	
 	public static ArrayList<File> list(File folder) {
@@ -292,4 +287,16 @@ public class GameRunner {
 		lot = "L" + year.format(date) + julianDay + "/" + hour.format(date);
 		return lot;
 	}
+	
+    static List<String> hideAccessToken(String[] arguments) {
+        final ArrayList<String> output = new ArrayList();
+        for (int i = 0; i < arguments.length; i++) {
+            if (i > 0 && Objects.equals(arguments[i-1], "--accessToken")) {
+                output.add("????????");
+            } else {
+                output.add(arguments[i]);
+            }
+        }
+        return output;
+    }
 }
