@@ -289,7 +289,7 @@ public class GameRunner {
 	}
 	
     static List<String> hideAccessToken(String[] arguments) {
-        final ArrayList<String> output = new ArrayList();
+        final ArrayList<String> output = new ArrayList<String>();
         for (int i = 0; i < arguments.length; i++) {
             if (i > 0 && Objects.equals(arguments[i-1], "--accessToken")) {
                 output.add("????????");
