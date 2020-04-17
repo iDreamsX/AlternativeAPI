@@ -62,7 +62,7 @@ public class GameRunner {
 			cmds += command + " ";
 		}
 		String[] ary = cmds.split(" ");
-		Logger.err("Lancement: " + hideAccessToken(ary));
+		Logger.log("Lancement: " + hideAccessToken(ary));
 		Logger.log("" + generateLot());
 		try {
 			Process process = processBuilder.start();

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
@@ -19,6 +20,7 @@ import java.nio.file.Paths;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.util.Enumeration;
+import java.util.Scanner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -275,5 +277,21 @@ public class FileUtil {
 		}
 
 		return String.format("%1$032x", new Object[] { new BigInteger(1, stream.getMessageDigest().digest()) });
+	}
+	
+	public static String readMD5(String url) {
+		String result = "";
+		try {
+			Scanner scan = new Scanner((new URL(url)).openStream(), "UTF-8");
+			if (!scan.hasNextLine()) {
+				scan.close();
+			}
+			result = scan.nextLine();
+			scan.close();
+			return result;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 }

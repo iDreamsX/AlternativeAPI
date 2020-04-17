@@ -32,4 +32,13 @@ public class ResourceLocation {
 		}
 		return SwingFXUtils.toFXImage(bufferedImage, null);
 	}
+	
+	public BufferedImage loadImageAWT(String image) {
+		BufferedImage bufferedImage = null;
+		try {
+			bufferedImage = ImageIO.read(ResourceLocation.class.getResourceAsStream(String.valueOf("/resources/") + image));
+		} catch (IOException iOException) {
+		}
+		return bufferedImage;
+	}
 }
