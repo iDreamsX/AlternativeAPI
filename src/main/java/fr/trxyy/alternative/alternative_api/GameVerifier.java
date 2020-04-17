@@ -110,7 +110,7 @@ public class GameVerifier {
 			while ((i = read.readLine()) != null) {
 				String correctName = i.replace('/', File.separatorChar);
 				this.ignoreList.add("" + this.engine.getGameFolder().getGameDir() + File.separatorChar + correctName);
-				Logger.log("Added: " + this.engine.getGameFolder().getGameDir() + File.separatorChar + correctName + " to ignoreList.");
+//				Logger.log("Added: " + this.engine.getGameFolder().getGameDir() + File.separatorChar + correctName + " to ignoreList.");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -142,7 +142,7 @@ public class GameVerifier {
 			while ((i = read.readLine()) != null) {
 				String correctName = i.replace('/', File.separatorChar);
 				this.deleteList.add("" + this.engine.getGameFolder().getGameDir() + File.separatorChar + correctName);
-				Logger.log("Added: " + this.engine.getGameFolder().getGameDir() + File.separatorChar + correctName + " to deleteList.");
+//				Logger.log("Added: " + this.engine.getGameFolder().getGameDir() + File.separatorChar + correctName + " to deleteList.");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -207,7 +207,7 @@ public class GameUpdater extends Thread {
 							this.jarsExecutor.submit(downloadTask);
 						}
 						else {
-							Logger.err("SKIPPED >> " + libPath.getAbsolutePath().replace(engine.getGameFolder().getGameDir().getAbsolutePath(), ""));
+//							Logger.err("SKIPPED >> " + libPath.getAbsolutePath().replace(engine.getGameFolder().getGameDir().getAbsolutePath(), ""));
 						}
 					}
 				}
@@ -227,7 +227,7 @@ public class GameUpdater extends Thread {
 									this.jarsExecutor.submit(downloadTask8);
 								}
 								else {
-									Logger.err("SKIPPED >> " + nativePath.getAbsolutePath().replace(engine.getGameFolder().getGameDir().getAbsolutePath(), ""));
+//									Logger.err("SKIPPED >> " + nativePath.getAbsolutePath().replace(engine.getGameFolder().getGameDir().getAbsolutePath(), ""));
 								}
 							}
 						}
@@ -364,7 +364,7 @@ public class GameUpdater extends Thread {
 					this.customJarsExecutor.submit(customDownloadTask);
 				}
 				else {
-					Logger.err("SKIPPED >> " + libPath.getAbsolutePath().replace(engine.getGameFolder().getGameDir().getAbsolutePath(), ""));
+//					Logger.err("SKIPPED >> " + libPath.getAbsolutePath().replace(engine.getGameFolder().getGameDir().getAbsolutePath(), ""));
 				}
 			
 			
