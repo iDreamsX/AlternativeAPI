@@ -21,6 +21,7 @@ public class GameVerifier {
 	public static List<String> allowedFiles = new ArrayList<String>();
 	public List<File> filesList;
 	public List<String> ignoreList = new ArrayList<String>();
+	public List<String> ignoreListFolder = new ArrayList<String>();
 	public List<String> deleteList = new ArrayList<String>();
 	
 	public GameVerifier(GameEngine gameEngine) {
@@ -36,29 +37,15 @@ public class GameVerifier {
 			}
 			
 			if (!existInAllowedFiles(file.getAbsolutePath().replace(this.engine.getGameFolder().getGameDir().getAbsolutePath(), ""))) {
-				if (existInIgnoreList(file.getAbsolutePath().replace(this.engine.getGameFolder().getGameDir().getAbsolutePath(), ""))) {
-//					Logger.log("SKIPPED >> " + file);
+				if (existInIgnoreListFolder(file.getParent().replace(this.engine.getGameFolder().getGameDir().getAbsolutePath(), ""))) {
+					// existe dans la ignore list des dossiers
+				}
+				else if (existInIgnoreList(file.getAbsolutePath().replace(this.engine.getGameFolder().getGameDir().getAbsolutePath(), ""))) {
+					// Le fichier existe dans la ignoreList, on ne supprime pas
 				}
 				else {
-					if (file.getAbsolutePath().startsWith(this.engine.getGameFolder().getPlayDir().getAbsolutePath() + File.separator +  "saves".replace('/', File.separatorChar))) {
-//						Logger.log("SKIPPED BECAUSE ITS A WORLD >> " + file);
-					}
-					else if (file.getAbsolutePath().startsWith(this.engine.getGameFolder().getPlayDir().getAbsolutePath() + File.separator +  "logs".replace('/', File.separatorChar))) {
-//						Logger.log("SKIPPED BECAUSE ITS LOGS >> " + file);
-					}
-					else if (file.getAbsolutePath().startsWith(this.engine.getGameFolder().getPlayDir().getAbsolutePath() + File.separator +  "resourcepacks".replace('/', File.separatorChar))) {
-//						Logger.log("SKIPPED BECAUSE ITS RESOURCESPACKS >> " + file);
-					}
-					else if (file.getAbsolutePath().startsWith(this.engine.getGameFolder().getPlayDir().getAbsolutePath() + File.separator +  "shaderpacks".replace('/', File.separatorChar))) {
-//						Logger.log("SKIPPED BECAUSE ITS SHADERPACKS >> " + file);
-					}
-					else if (file.getAbsolutePath().startsWith(this.engine.getGameFolder().getPlayDir().getAbsolutePath() + File.separator +  "config".replace('/', File.separatorChar))) {
-//						Logger.log("SKIPPED BECAUSE ITS FORGE CONFIG FOLDER >> " + file);
-					}
-					else {
-//						Logger.err("DELETING >> " + file);
-						FileUtil.deleteSomething(file.getAbsolutePath());
-					}
+					// Sinon on supprime
+					FileUtil.deleteSomething(file.getAbsolutePath());
 				}
 			}
 		}
@@ -72,6 +59,16 @@ public class GameVerifier {
 		for(String str: this.ignoreList) {
 		    if(str.trim().contains(search))
 		       return true;
+		}
+		return false;
+	}
+	
+	public boolean existInIgnoreListFolder(String search) {
+		String newSearch = search + "\\";
+		for(String str: this.ignoreListFolder) {
+		    if(newSearch.contains(str)) {
+			       return true;
+		    }
 		}
 		return false;
 	}
@@ -109,8 +106,13 @@ public class GameVerifier {
 		try {
 			while ((i = read.readLine()) != null) {
 				String correctName = i.replace('/', File.separatorChar);
-				this.ignoreList.add("" + this.engine.getGameFolder().getGameDir() + File.separatorChar + correctName);
-//				Logger.log("Added: " + this.engine.getGameFolder().getGameDir() + File.separatorChar + correctName + " to ignoreList.");
+				if (correctName.endsWith("\\") || correctName.endsWith("/")) {
+					Logger.log(correctName + " is a folder.");
+					this.ignoreListFolder.add(correctName);
+				}
+				else {
+					this.ignoreList.add("" + this.engine.getGameFolder().getGameDir() + File.separatorChar + correctName);
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

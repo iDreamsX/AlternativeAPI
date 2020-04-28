@@ -21,7 +21,7 @@ public class GameAuth
 {
   public String USERNAME = "";
   public String PASSWORD = "";
-  public static boolean isAuthed = false;
+  public boolean isAuthed = false;
   private static Session session = new Session();
   
 	public GameAuth(String userName, String passWord, AccountType realAuth) {
@@ -139,7 +139,7 @@ public class GameAuth
     return new String(buffer);
   }
 
-	public static boolean isLogged() {
+	public boolean isLogged() {
 		return isAuthed;
 	}
 

@@ -1,7 +1,6 @@
 package fr.trxyy.alternative.alternative_api.build;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
@@ -53,10 +52,9 @@ public class GameRunner {
 	
     public Process launch() throws Exception
     {
-        ProcessBuilder processBuilder = new ProcessBuilder();
+        ProcessBuilder processBuilder = new ProcessBuilder(getLaunchCommand());
 		processBuilder.directory(engine.getGameFolder().getGameDir());
 		processBuilder.redirectErrorStream(true);
-		processBuilder.command(getLaunchCommand()); // getLaunchCommandsForge
 		String cmds = "";
 		for (String command : getLaunchCommand()) {
 			cmds += command + " ";
@@ -104,7 +102,6 @@ public class GameRunner {
 		String defaultArgument = is32Bit ? "-Xmx512M -Xmn128M" : "-Xmx1G -Xmn128M";
 		if (engine.getGameMemory() != null) {
 			defaultArgument = is32Bit ? "-Xmx512M -Xmn128M" : "-Xmx" + engine.getGameMemory().getCount() + " -Xmn128M";
-			Logger.err("ERR");
 		}
 		String str[] = defaultArgument.split(" ");
 		List<String> args = Arrays.asList(str);
@@ -147,6 +144,17 @@ public class GameRunner {
 			commands.add("--port=" + engine.getGameConnect().getPort());
 		}
 		
+//		commands.add("--launchTarget");
+//		commands.add("fmlclient");
+//		commands.add("--fml.forgeVersion");
+//		commands.add("31.1.0");
+//		commands.add("--fml.mcVersion");
+//		commands.add("1.15.2");
+//		commands.add("--fml.forgeGroup");
+//		commands.add("net.minecraftforge");
+//		commands.add("--fml.mcpVersion");
+//		commands.add("20200122.131323");
+		
 		/** ----- Tweak Class if required ----- */
 		if (engine.getGameStyle().equals(GameStyle.FORGE_1_7_10_OLD) || engine.getGameStyle().equals(GameStyle.FORGE_1_8_TO_1_12_2) || engine.getGameStyle().equals(GameStyle.OPTIFINE) || engine.getGameStyle().equals(GameStyle.ALTERNATIVE)) {
 			commands.add("--tweakClass");
@@ -155,87 +163,6 @@ public class GameRunner {
 		return commands;
 	}
 	
-	private ArrayList<String> getLaunchCommandsForge() {
-		ArrayList<String> commands = new ArrayList<String>();
-		File javaPath = new File("G:\\Minecraft Launcher\\runtime\\jre-x64\\bin\\java");
-        commands.add(javaPath.getAbsolutePath());
-        
-		commands.add("-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump");
-		commands.add("-Djava.library.path=" + engine.getGameFolder().getNativesDir().getAbsolutePath());
-		commands.add("-Dfml.ignoreInvalidMinecraftCertificates=true");
-		commands.add("-Dfml.ignorePatchDiscrepancies=true");
-        commands.add("-Dminecraft.launcher.brand=minecraft-launcher");
-        commands.add("-Dminecraft.launcher.version=2.1.13508");
-        
-		commands.add("-cp");
-		commands.add(GameUtils.constructClasspath(engine));
-		
-		commands.add("cpw.mods.modlauncher.Launcher");
-		
-//		commands.add("--username");
-//		commands.add("Trxyy");
-//		
-//		commands.add("--version");
-//		commands.add("1.14.4-forge-28.2.0");
-//		
-//		commands.add("--gameDir");
-//		commands.add(engine.getGameFolder().getPlayDir().getAbsolutePath());
-//		
-//		commands.add("--assetsDir");
-//		commands.add(engine.getGameFolder().getAssetsDir().getAbsolutePath());
-//		
-//		commands.add("--assetIndex");
-//		commands.add("1.14");
-//		
-//		commands.add("--uuid");
-//		commands.add("0");
-//		
-//		commands.add("--accessToken");
-//		commands.add("0");
-//		
-//		commands.add("--userType");
-//		commands.add("mojang");
-//		
-//		commands.add("--versionType");
-//		commands.add("release");
-		
-        final String[] argsD = getMinecraftArguments();
-        List<String> arguments = Arrays.asList(argsD);
-        commands.addAll(arguments);
-		
-		/** ----- Change properties of Forge (1.13+) ----- */
-		commands.add("--launchTarget");
-		commands.add("fmlclient");
-		
-		commands.add("--fml.forgeVersion");
-		commands.add("28.2.0");
-		
-		commands.add("--fml.mcVersion");
-		commands.add("1.14.4");
-		
-		commands.add("--fml.forgeGroup");
-		commands.add("net.minecraftforge");
-		
-		commands.add("--fml.mcpVersion");
-		commands.add("20190829.143755");
-		return commands;
-	}
-	
-	public static ArrayList<File> list(File folder) {
-		ArrayList<File> files = new ArrayList<File>();
-		if (!folder.isDirectory())
-			return files;
-
-		File[] folderFiles = folder.listFiles();
-		if (folderFiles != null)
-			for (File f : folderFiles)
-				if (f.isDirectory())
-					files.addAll(list(f));
-				else
-					files.add(f);
-
-		return files;
-	}
 	
 	private String[] getMinecraftArguments() {
 		final Map<String, String> map = new HashMap<String, String>();
@@ -288,7 +215,7 @@ public class GameRunner {
 		return lot;
 	}
 	
-    static List<String> hideAccessToken(String[] arguments) {
+	public static List<String> hideAccessToken(String[] arguments) {
         final ArrayList<String> output = new ArrayList<String>();
         for (int i = 0; i < arguments.length; i++) {
             if (i > 0 && Objects.equals(arguments[i-1], "--accessToken")) {

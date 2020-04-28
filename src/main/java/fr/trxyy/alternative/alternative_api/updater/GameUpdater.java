@@ -45,23 +45,14 @@ public class GameUpdater extends Thread {
 	/** JARS POOL */
 	private ExecutorService jarsExecutor = Executors.newFixedThreadPool(5);
 	/** PROGRESS BAR */
-	public LauncherProgressBar fakeProgressBar;
 	private String currentInfoText = "";
 	private String currentFile = "";
 	/** TRY FAKE PROGRESS */
-	public int downloadedFiles = 0; // Downloader
+	public int downloadedFiles = 0;
 	public int filesToDownload = 0;
 
 	public void reg(GameEngine gameEngine) {
 		this.engine = gameEngine;
-	}
-	
-	public void reg(LauncherProgressBar suppBar) {
-	    if (suppBar != null) {
-	        fakeProgressBar = suppBar;
-	      } else {
-	        fakeProgressBar = new LauncherProgressBar();
-	      } 
 	}
 
 	public void reg(Session account) {
@@ -207,7 +198,6 @@ public class GameUpdater extends Thread {
 							this.jarsExecutor.submit(downloadTask);
 						}
 						else {
-//							Logger.err("SKIPPED >> " + libPath.getAbsolutePath().replace(engine.getGameFolder().getGameDir().getAbsolutePath(), ""));
 						}
 					}
 				}
@@ -227,7 +217,6 @@ public class GameUpdater extends Thread {
 									this.jarsExecutor.submit(downloadTask8);
 								}
 								else {
-//									Logger.err("SKIPPED >> " + nativePath.getAbsolutePath().replace(engine.getGameFolder().getGameDir().getAbsolutePath(), ""));
 								}
 							}
 						}
@@ -363,21 +352,7 @@ public class GameUpdater extends Thread {
 				if (!verifier.existInDeleteList(libPath.getAbsolutePath().replace(engine.getGameFolder().getGameDir().getAbsolutePath(), ""))) {
 					this.customJarsExecutor.submit(customDownloadTask);
 				}
-				else {
-//					Logger.err("SKIPPED >> " + libPath.getAbsolutePath().replace(engine.getGameFolder().getGameDir().getAbsolutePath(), ""));
-				}
-			
-			
-//			if (!name.endsWith("/")) {
-//				String url = engine.getGameLinks().getCustomFilesUrl() + name;
-//				File file = new File(engine.getGameFolder().getGameDir() + File.separator + dirLocation);
-//				if (!verifier.existInDeleteList(file.getAbsolutePath().replace(engine.getGameFolder().getGameDir().getAbsolutePath(), ""))) {
-//					downloadFile(url, file);
-//				}
-//				else {
-//					Logger.err("SKIPPED >> " + file.getAbsolutePath().replace(engine.getGameFolder().getGameDir().getAbsolutePath(), ""));
-//				}
-//			}
+				else {}
 		}
 	}
 	
@@ -397,10 +372,6 @@ public class GameUpdater extends Thread {
 
 	public GameEngine getEngine() {
 		return engine;
-	}
-	
-	public LauncherProgressBar getProgressBar() {
-		return fakeProgressBar;
 	}
 
 	public String getCurrentInfo() {
