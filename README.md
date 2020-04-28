@@ -1,13 +1,13 @@
 ![Logo](https://trxyy.chaun14.fr/github/AlternativeAPI_logo.png)
 
-<h4 align="center">Une librairie JavaFX pour faire des launchers Minecraft</h4>
+<h4 align="center">A JavaFX Library for Minecraft Launchers</h4>
 
-## Téléchargements
+## Downloads
 
-- Téléchargez la dernière version [ICI](https://github.com/TrxyyDev/AlternativeAPI/releases/latest)
-- Vous pouvez utiliser les sources du launcher [ICI](https://github.com/TrxyyDev/AlternativeAPI-launcher)
+- Download latest version [HERE](https://github.com/TrxyyDev/AlternativeAPI/releases/latest)
+- You can use my launcher sources [HERE](https://github.com/TrxyyDev/AlternativeAPI-launcher)
 
-## Fichiers distants
+## Distants files
 
 - ignore.cfg
 ```
@@ -34,8 +34,8 @@ libraries/com/google/guava/guava/15.0/guava-15.0.jar
 
 
 
-Forge 1.13 et supérieur non fonctionnel.
+Forge 1.13 & newer unavailable.
 
-Vous pouvez utiliser NodeJS afin d'avoir un chargement plus rapide des fichiers personnalisés en utilisant
+You can use NodeJS for better performances to check custom files
 - https://github.com/chaun14/AlternativeApi-NodeJS-Server-lite
 - https://github.com/chaun14/AlternativeApi-NodeJS-Server-full
