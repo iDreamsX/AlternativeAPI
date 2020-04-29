@@ -6,6 +6,8 @@
 
 - Download latest version [HERE](https://github.com/TrxyyDev/AlternativeAPI/releases/latest)
 - You can use my launcher sources [HERE](https://github.com/TrxyyDev/AlternativeAPI-launcher)
+- Web folder [HERE](https://mega.nz/file/KuoWRaoA#sndww_8xgbMEddXDs46uPOssfFnLwu4tyE502aIirKI)
+- Resources (for launcher) [HERE](https://mega.nz/file/ProWSSoZ#IzHCIfJsTbhty-U6GYSqlKQG7Dg3LBfbc6-FgA6Devw)
 
 ## Distants files
 
