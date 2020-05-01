@@ -9,6 +9,18 @@
 - Web folder [HERE](https://mega.nz/file/KuoWRaoA#sndww_8xgbMEddXDs46uPOssfFnLwu4tyE502aIirKI)
 - Resources (for launcher) [HERE](https://mega.nz/file/ProWSSoZ#IzHCIfJsTbhty-U6GYSqlKQG7Dg3LBfbc6-FgA6Devw)
 
+## For Forge 1.13+ (deleting libraries)
+Go inside your libraries folder in your host.
+Go to libraries/com/google/guava/guava/
+And keep only the higher version, delete all others.
+## OR
+Go inside your delete.cfg folder in your host
+and write a new line by putting the location of the guava libraries
+which are lower than the highest
+Example:
+libraries/com/google/guava/guava/15.0/guava-15.0.jar
+libraries/com/google/guava/guava/20.0/guava-20.0.jar
+libraries/com/google/guava/guava/21.0/guava-21.0.jar
 ## Distants files
 
 - ignore.cfg
@@ -31,7 +43,6 @@ logs/
 ```
 libraries/com/google/guava/guava/15.0/guava-15.0.jar
 ```
-
 
 
 
