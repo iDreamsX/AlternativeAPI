@@ -9,6 +9,7 @@ import java.util.Date;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import fr.trxyy.alternative.alternative_api.minecraft.json.Argument;
 import fr.trxyy.alternative.alternative_api.minecraft.utils.DateTypeAdapter;
 import fr.trxyy.alternative.alternative_api.minecraft.utils.LowerCaseEnumTypeAdapterFactory;
 
@@ -18,6 +19,7 @@ public class JsonUtil {
 		final GsonBuilder gsonBuilder = new GsonBuilder();
 		gsonBuilder.registerTypeAdapterFactory(new LowerCaseEnumTypeAdapterFactory());
 		gsonBuilder.registerTypeAdapter(Date.class, new DateTypeAdapter());
+		gsonBuilder.registerTypeAdapter(Argument.class, new Argument.Serializer());
 		gsonBuilder.enableComplexMapKeySerialization();
 		gsonBuilder.setPrettyPrinting();
 		return gsonBuilder.create();

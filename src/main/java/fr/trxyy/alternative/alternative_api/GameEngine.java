@@ -1,6 +1,7 @@
 package fr.trxyy.alternative.alternative_api;
 
 import fr.trxyy.alternative.alternative_api.maintenance.GameMaintenance;
+import fr.trxyy.alternative.alternative_api.minecraft.json.MinecraftVersion;
 import fr.trxyy.alternative.alternative_api.updater.GameUpdater;
 import fr.trxyy.alternative.alternative_api_ui.base.AlternativeBase;
 import javafx.stage.Stage;
@@ -20,6 +21,7 @@ public class GameEngine {
 	private GameArguments gameArguments;
 	private GameMaintenance gameMaintenance;
 	private Stage fakeBase;
+	private MinecraftVersion minecraftVersion;
 	
 	public GameEngine(GameFolder folder, LauncherPreferences lSize, GameVersion version, GameStyle style, GameSize size) {
 		this.gameFolder = folder;
@@ -55,6 +57,10 @@ public class GameEngine {
 		this.gameLinks = links;
 		this.gameForge = null;
 		this.gameConnect = connect;
+	}
+	
+	public void reg(MinecraftVersion version) {
+		this.minecraftVersion = version;
 	}
 	
 	public void reg(GameLinks links) {
@@ -124,6 +130,9 @@ public class GameEngine {
 	}
 	
 	public GameSize getGameSize() {
+		if (this.gameSize == null) {
+			this.gameSize = GameSize.DEFAULT;
+		}
 		return this.gameSize;
 	}
 	
@@ -153,5 +162,9 @@ public class GameEngine {
 	
 	public GameMaintenance getGameMaintenance() {
 		return this.gameMaintenance;
+	}
+	
+	public MinecraftVersion getMinecraftVersion() {
+		return this.minecraftVersion;
 	}
 }

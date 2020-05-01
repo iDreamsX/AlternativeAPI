@@ -1,6 +1,10 @@
 package fr.trxyy.alternative.alternative_api.minecraft.json;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 import fr.trxyy.alternative.alternative_api.assets.AssetIndexInfo;
 
@@ -8,26 +12,39 @@ public class MinecraftVersion {
 
 	private String id;
 	private String inheritsFrom;
+	private String minecraftArguments;
 	private List<MinecraftLibrary> libraries;
 	private String mainClass;
 	private String assets;
 	private AssetIndexInfo assetIndex;
 	private MinecraftClient downloads;
+	public Map<ArgumentType, List<Argument>> arguments;
 
 	public MinecraftVersion() {
 	}
 
-	public MinecraftVersion(MinecraftVersion other) {
-		this.id = other.id;
-		if (other.inheritsFrom != null) {
-			this.inheritsFrom = other.inheritsFrom;
+	public MinecraftVersion(MinecraftVersion version) {
+		this.id = version.id;
+		if (version.inheritsFrom != null) {
+			this.inheritsFrom = version.inheritsFrom;
 		}
-		if (other.assetIndex != null) {
-			this.assetIndex = other.assetIndex;
+		if (version.assetIndex != null) {
+			this.assetIndex = version.assetIndex;
 		}
-		this.libraries = other.libraries;
-		this.mainClass = other.mainClass;
-		this.assets = other.assets;
+		if (version.arguments != null) {
+			this.arguments = Maps.newEnumMap(ArgumentType.class);
+			for (Map.Entry<ArgumentType, List<Argument>> entry : version.arguments.entrySet()) {
+				this.arguments.put(entry.getKey(), new ArrayList<Argument>(entry.getValue()));
+			}
+		}
+	    this.minecraftArguments = version.minecraftArguments;
+		this.libraries = version.libraries;
+		this.mainClass = version.mainClass;
+		this.assets = version.assets;
+	}
+	
+	public String getMinecraftArguments() {
+		return this.minecraftArguments;
 	}
 
 	public List<MinecraftLibrary> getLibraries() {
@@ -76,5 +93,9 @@ public class MinecraftVersion {
 
 	public void setAssetIndex(String s) {
 		this.assets = s;
+	}
+
+	public Map<ArgumentType, List<Argument>> getArguments() {
+		return this.arguments;
 	}
 }

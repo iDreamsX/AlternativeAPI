@@ -3,11 +3,8 @@ package fr.trxyy.alternative.alternative_api.build;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +16,8 @@ import fr.trxyy.alternative.alternative_api.GameEngine;
 import fr.trxyy.alternative.alternative_api.GameForge;
 import fr.trxyy.alternative.alternative_api.GameStyle;
 import fr.trxyy.alternative.alternative_api.account.Session;
+import fr.trxyy.alternative.alternative_api.minecraft.json.Argument;
+import fr.trxyy.alternative.alternative_api.minecraft.json.ArgumentType;
 import fr.trxyy.alternative.alternative_api.utils.Logger;
 import fr.trxyy.alternative.alternative_api.utils.OperatingSystem;
 import fr.trxyy.alternative.alternative_api.utils.file.FileUtil;
@@ -29,7 +28,7 @@ public class GameRunner {
 
 	private GameEngine engine;
 	private Session session;
-
+	
 	public GameRunner(GameEngine gameEngine, Session account) {
 		this.engine = gameEngine;
 		this.session = account;
@@ -49,19 +48,19 @@ public class GameRunner {
 			});
 		}
 	}
-	
+	  
     public Process launch() throws Exception
     {
-        ProcessBuilder processBuilder = new ProcessBuilder(getLaunchCommand());
+    	ArrayList<String> commands = getLaunchCommand();
+        ProcessBuilder processBuilder = new ProcessBuilder(commands);
 		processBuilder.directory(engine.getGameFolder().getGameDir());
 		processBuilder.redirectErrorStream(true);
 		String cmds = "";
-		for (String command : getLaunchCommand()) {
+		for (String command : commands) {
 			cmds += command + " ";
 		}
 		String[] ary = cmds.split(" ");
 		Logger.log("Lancement: " + hideAccessToken(ary));
-		Logger.log("" + generateLot());
 		try {
 			Process process = processBuilder.start();
 			String line;
@@ -107,14 +106,30 @@ public class GameRunner {
 		List<String> args = Arrays.asList(str);
 		commands.addAll(args);
 		
-		
 		commands.add("-cp");
 		commands.add("\"" + GameUtils.constructClasspath(engine) + "\"");
 		commands.add(engine.getGameStyle().getMainClass());
 		
-        final String[] argsD = getMinecraftArguments();
-        List<String> arguments = Arrays.asList(argsD);
-        commands.addAll(arguments);
+		/** ----- Minecraft Arguments ----- */
+		if (engine.getMinecraftVersion().getMinecraftArguments() != null) {
+	        final String[] argsD = getArgumentsOlder();
+	        List<String> arguments = Arrays.asList(argsD);
+	        commands.addAll(arguments);
+		}
+		/** ----- Minecraft Arguments 1.13+ ----- */
+		if (engine.getMinecraftVersion().getArguments() != null) {
+			List<Argument> argsNewer = engine.getMinecraftVersion().getArguments().get(ArgumentType.GAME);
+			final String[] newerArgumentsString = getArgumentsNewer(argsNewer);
+
+			StringBuffer sb = new StringBuffer();
+			for (int i = 0; i < newerArgumentsString.length; i++) {
+				sb.append(newerArgumentsString[i] + " ");
+			}
+			String sub = sb.toString().replace("--demo", "").replace("--width", "").replace("--height", "");
+			String strcs[] = sub.split(" ");
+			List<String> newerList = Arrays.asList(strcs);
+			commands.addAll(newerList);
+		}
 		
 		/** ----- Addons arguments ----- */
 		if (engine.getGameArguments() != null) {
@@ -129,13 +144,7 @@ public class GameRunner {
 		
 		/** ----- Change properties of Forge (1.13+) ----- */
 		if (engine.getGameStyle().getSpecificsArguments() != null) {
-			String specfs = engine.getGameStyle().getSpecificsArguments();
-			specfs = specfs.replace("${launch_target_fml}", GameForge.getLaunchTarget())
-			.replace("${forge_version_fml}", GameForge.getForgeVersion())
-			.replace("${mc_version_fml}", GameForge.getMcVersion())
-			.replace("${forge_group_fml}", GameForge.getForgeGroup())
-			.replace("${mcp_version_fml}", GameForge.getMcpVersion());
-			commands.add(specfs);
+			commands.addAll(getForgeArguments());
 		}
 		
 		/** ----- Direct connect to a server if required. ----- */
@@ -143,17 +152,6 @@ public class GameRunner {
 			commands.add("--server=" + engine.getGameConnect().getIp());
 			commands.add("--port=" + engine.getGameConnect().getPort());
 		}
-		
-//		commands.add("--launchTarget");
-//		commands.add("fmlclient");
-//		commands.add("--fml.forgeVersion");
-//		commands.add("31.1.0");
-//		commands.add("--fml.mcVersion");
-//		commands.add("1.15.2");
-//		commands.add("--fml.forgeGroup");
-//		commands.add("net.minecraftforge");
-//		commands.add("--fml.mcpVersion");
-//		commands.add("20200122.131323");
 		
 		/** ----- Tweak Class if required ----- */
 		if (engine.getGameStyle().equals(GameStyle.FORGE_1_7_10_OLD) || engine.getGameStyle().equals(GameStyle.FORGE_1_8_TO_1_12_2) || engine.getGameStyle().equals(GameStyle.OPTIFINE) || engine.getGameStyle().equals(GameStyle.ALTERNATIVE)) {
@@ -163,11 +161,46 @@ public class GameRunner {
 		return commands;
 	}
 	
-	
-	private String[] getMinecraftArguments() {
+	private List<String> getForgeArguments() {
+		String specfs = engine.getGameStyle().getSpecificsArguments();
+		specfs = specfs.replace("${launch_target_fml}", GameForge.getLaunchTarget())
+		.replace("${forge_version_fml}", GameForge.getForgeVersion())
+		.replace("${mc_version_fml}", GameForge.getMcVersion())
+		.replace("${forge_group_fml}", GameForge.getForgeGroup())
+		.replace("${mcp_version_fml}", GameForge.getMcpVersion());
+		String[] ficelle = specfs.split(" ");
+		List<String> newerList = Arrays.asList(ficelle);
+		return newerList;
+	}
+
+	private String[] getArgumentsOlder() {
 		final Map<String, String> map = new HashMap<String, String>();
 		final StrSubstitutor substitutor = new StrSubstitutor(map);
-		final String[] split = this.engine.getGameVersion().getArguments().split(" ");
+		final String[] split = engine.getMinecraftVersion().getMinecraftArguments().split(" ");
+		map.put("auth_player_name", this.session.getUsername());
+		map.put("auth_uuid", this.session.getUuid());
+		map.put("auth_access_token", this.session.getToken());
+		map.put("user_type", "legacy");
+		map.put("version_name", this.engine.getGameVersion().getVersion());
+		map.put("version_type", "release");
+		map.put("game_directory", this.engine.getGameFolder().getPlayDir().getAbsolutePath());
+		map.put("assets_root", this.engine.getGameFolder().getAssetsDir().getAbsolutePath());
+		map.put("assets_index_name", this.engine.getGameVersion().getAssetIndex());
+		map.put("user_properties", "{}");
+
+		for (int i = 0; i < split.length; i++)
+			split[i] = substitutor.replace(split[i]);
+
+		return split;
+	}
+	
+	private String[] getArgumentsNewer(List<Argument> args) {
+		final Map<String, String> map = new HashMap<String, String>();
+		final StrSubstitutor substitutor = new StrSubstitutor(map);
+		final String[] split = new String[args.size()];
+		for (int i = 0; i < args.size(); i++) {
+				split[i] = args.get(i).getArguments();
+		}
 		map.put("auth_player_name", this.session.getUsername());
 		map.put("auth_uuid", this.session.getUuid());
 		map.put("auth_access_token", this.session.getToken());
@@ -203,16 +236,6 @@ public class GameRunner {
 			e.printStackTrace();
 			return;
 		}
-	}
-	
-	public static String generateLot() {
-		String lot = "";
-		SimpleDateFormat year = new SimpleDateFormat("YY");
-		SimpleDateFormat hour = new SimpleDateFormat("HHmmss");
-		Date date = new Date();
-		int julianDay = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
-		lot = "L" + year.format(date) + julianDay + "/" + hour.format(date);
-		return lot;
 	}
 	
 	public static List<String> hideAccessToken(String[] arguments) {

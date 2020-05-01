@@ -242,7 +242,6 @@ public class FileUtil {
 		Path filePath_1 = Paths.get(path);
 		try {
 			Files.delete(filePath_1);
-			Logger.log("Deleting: " + path);
 		} catch (NoSuchFileException x) {
 			System.err.format("%s: no such" + " file or directory%n", path);
 		} catch (DirectoryNotEmptyException x) {

@@ -4,6 +4,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -26,7 +29,6 @@ import fr.trxyy.alternative.alternative_api.utils.file.FileUtil;
 import fr.trxyy.alternative.alternative_api.utils.file.GameUtils;
 import fr.trxyy.alternative.alternative_api.utils.file.JsonUtil;
 import fr.trxyy.alternative.alternative_api.utils.file.LauncherFile;
-import fr.trxyy.alternative.alternative_api_ui.components.LauncherProgressBar;
 
 public class GameUpdater extends Thread {
 
@@ -132,7 +134,7 @@ public class GameUpdater extends Thread {
 		Logger.log("|      Update Finished. Launching.     |");
 		Logger.log("|            Version " + minecraftVersion.getId() + "            |");
 		Logger.log("|          Runtime: " + System.getProperty("java.version") + "          |");
-		Logger.log("|              Build ID: -1            |");
+		Logger.log("|             Build ID:" + generateLot() + "           |");
 		Logger.log("========================================");
 		Logger.log("\n\n");
 		Logger.log("==============GAME OUTPUT===============");
@@ -143,9 +145,20 @@ public class GameUpdater extends Thread {
 		GameRunner forgeGame = new GameRunner(this.engine, this.session);
 		try {
 			Process p = forgeGame.launch();
+//			forgeGame.launchGame();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static String generateLot() {
+		String lot = "";
+		SimpleDateFormat year = new SimpleDateFormat("YY");
+		SimpleDateFormat hour = new SimpleDateFormat("HHmmss");
+		Date date = new Date();
+		int julianDay = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
+		lot = "L" + year.format(date) + julianDay + "/" + hour.format(date);
+		return lot;
 	}
 
 	public static String constructClasspath(GameEngine engine) {
@@ -315,6 +328,7 @@ public class GameUpdater extends Thread {
 			e.printStackTrace();
 		} finally {
 			minecraftVersion = (MinecraftVersion) JsonUtil.getGson().fromJson(json, MinecraftVersion.class);
+			engine.reg(minecraftVersion);
 		}
 	}
 
