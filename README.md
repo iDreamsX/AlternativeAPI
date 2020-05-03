@@ -41,7 +41,6 @@ bin/game/saves/
 bin/game/resourcepacks/
 bin/game/shaderpacks/
 bin/game/config/
-bin/game/mods/
 logs/
 ```
 - delete.cfg
